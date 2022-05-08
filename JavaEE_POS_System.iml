@@ -9,6 +9,7 @@
         <webroots>
           <root url="file://$MODULE_DIR$/web" relative="/" />
         </webroots>
+        <sourceRoots />
       </configuration>
     </facet>
   </component>
@@ -21,5 +22,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 8.5.78" level="application_server_libraries" />
     <orderEntry type="library" name="mysql-connector-java-5.1.49" level="project" />
+    <orderEntry type="library" name="commons-dbcp2-2.9.0" level="project" />
+    <orderEntry type="library" name="JSON Processing" level="project" />
   </component>
 </module>
