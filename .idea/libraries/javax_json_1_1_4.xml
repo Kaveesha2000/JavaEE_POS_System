@@ -1,9 +1,8 @@
 <component name="libraryTable">
   <library name="javax.json-1.1.4">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/BackEnd/lib/javax.json-1.1.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/BackEnd/lib/javax.json-api-1.1.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/BackEnd/lib/mysql-connector-java-5.1.49.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.json-1.1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.json-api-1.1.4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
