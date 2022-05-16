@@ -165,7 +165,7 @@ public class CustomerServlet extends HttpServlet {
 
         try {
             Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("Update Customer set name=?,address=?,contact=? where id=?");
+            PreparedStatement pstm = connection.prepareStatement("Update Customer set custName=?,custAddress=?,custContact=? where custId=?");
             pstm.setObject(1, customerName);
             pstm.setObject(2, customerAddress);
             pstm.setObject(3, customerContact);
