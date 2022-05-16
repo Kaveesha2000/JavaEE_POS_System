@@ -143,16 +143,16 @@ public class ItemServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String customerID = req.getParameter("custId");
+        String itemId = req.getParameter("itemId");
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
             Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("Delete from Customer where custId=?");
-            pstm.setObject(1, customerID);
+            PreparedStatement pstm = connection.prepareStatement("Delete from item where itemId=?");
+            pstm.setObject(1, itemId);
 
-            System.out.println(customerID);
+            //System.out.println(itemId);
             if (pstm.executeUpdate() > 0) {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("status", 200);
@@ -184,20 +184,20 @@ public class ItemServlet extends HttpServlet {
 
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject jsonObject = reader.readObject();
-        String customerID = jsonObject.getString("id");
-        String customerName = jsonObject.getString("name");
-        String customerAddress = jsonObject.getString("address");
-        String customerContact = jsonObject.getString("contact");
+        String itemId = jsonObject.getString("id");
+        String itemName = jsonObject.getString("name");
+        String unitPrice = jsonObject.getString("unitPrice");
+        String qtyOnHand = jsonObject.getString("qtyOnHand");
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
             Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("Update Customer set custName=?,custAddress=?,custContact=? where custId=?");
-            pstm.setObject(1, customerName);
-            pstm.setObject(2, customerAddress);
-            pstm.setObject(3, customerContact);
-            pstm.setObject(4, customerID);
+            PreparedStatement pstm = connection.prepareStatement("Update item set itemName=?,unitPrice=?,qtyOnHand=? where  itemId=?");
+            pstm.setObject(1, itemId);
+            pstm.setObject(2, itemName);
+            pstm.setObject(3, unitPrice);
+            pstm.setObject(4, qtyOnHand);
             if (pstm.executeUpdate() > 0) {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("status", 200);

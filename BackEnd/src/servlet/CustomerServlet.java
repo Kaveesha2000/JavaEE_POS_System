@@ -156,7 +156,7 @@ public class CustomerServlet extends HttpServlet {
             PreparedStatement pstm = connection.prepareStatement("Delete from Customer where custId=?");
             pstm.setObject(1, customerID);
 
-            System.out.println(customerID);
+            //System.out.println(customerID);
             if (pstm.executeUpdate() > 0) {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("status", 200);

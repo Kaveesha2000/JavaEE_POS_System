@@ -145,11 +145,11 @@ $("#updateItem").click(function () {
     updateItem();
     loadAllItems();
     clearItemTextFields();
-    if (itemDB.length>0){
+    /*if (itemDB.length>0){
         generateItemId();
     }else {
         $("#itemId").val("I00-0001");
-    }
+    }*/
 })
 
 /*Delete On Action*/
@@ -157,11 +157,11 @@ $("#deleteBtnItem").click(function () {
     deleteItem();
     loadAllItems();
     clearItemTextFields();
-    if (itemDB.length>0){
+    /*if (itemDB.length>0){
         generateItemId();
     }else {
         $("#itemId").val("I00-0001");
-    }
+    }*/
 })
 
 /*Search On Action*/
@@ -207,18 +207,28 @@ function saveItem() {
 }
 
 function deleteItem() {
-    var index = -1;
+    let itemId = $("#itemId").val();
 
-    for (var j = 0; j < itemDB.length; j++) {
-        if ($('#tblItem>tr').itemId==(itemDB[j].getItemId())){
-            //console.log(itemDB[j].getItemId());
-            index = j;
+    $.ajax({
+        url: "http://localhost:8080/backend/item?itemId=" + itemId,
+        method: "DELETE",
+        success: function (res) {
+            console.log(res);
+            if (res.status == 200) {
+                alert(res.message);
+                loadAllItems();
+            } else if (res.status == 400) {
+                alert(res.data);
+            } else {
+                alert(res.data);
+            }
+
+        },
+        error: function (ob, status, t) {
+            alert("Error");
+            loadAllItems();
         }
-    }
-
-    itemDB.splice(index,1);
-    // clearing the text fields
-    clearItemTextFields();
+    });
 }
 
 function searchItem(id) {
@@ -233,19 +243,33 @@ function searchItem(id) {
 }
 
 function updateItem() {
-    let itemId = $("#itemId").val();
-    let itemName = $("#itemName").val();
-    let itemUnitPrice = $("#itemUnitPrice").val();
-    let itemQTYOnHand = $("#itemQTYOnHand").val();
-
-    for (var i = 0; i < itemDB.length; i++) {
-        if (itemId==itemDB[i].getItemId()){
-            itemDB[i].setetItemId(itemId);
-            itemDB[i].setItemName(itemName);
-            itemDB[i].setItemUnitPrice(itemUnitPrice);
-            itemDB[i].setQtyOnHand(itemQTYOnHand);
-        }
+    var itemOb = {
+        id: $("#itemId").val(),
+        name: $("#itemName").val(),
+        unitPrice: $("#itemUnitPrice").val(),
+        qtyOnHand: $("#itemQTYOnHand").val()
     }
+
+    $.ajax({
+        url: "http://localhost:8080/backend/item",
+        method: "PUT",
+        contentType: "application/json", //You should state request's content type using MIME types
+        data: JSON.stringify(itemOb), // format js object to valid json string
+        success: function (res) {
+            if (res.status == 200) { // process is  ok
+                alert(res.message);
+                loadAllItems();
+            } else if (res.status == 400) { // there is a problem with the client side
+                alert(res.message);
+            } else {
+                alert(res.data); // else maybe there is an exception
+            }
+        },
+        error: function (ob, errorStus) {
+            //console.log(ob); // other errors
+            alert(ob);
+        }
+    });
 }
 //END
 
