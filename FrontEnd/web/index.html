@@ -148,26 +148,26 @@
     </section>
     <!--Registration-->
     <section>
-        <form>
+        <form id="customerForm">
             <section class="row" style="width: 100%">
                 <div class="mb-2 col-6">
                     <label class="form-label" for="id" style="font-weight: bold">ID</label>
-                    <input class="form-control" id="id" placeholder="ID" type="text">
+                    <input class="form-control" id="id" name="customerId" placeholder="ID" type="text">
                     <p><small class="text-danger pl-1" id="errorid"></small></p>
                 </div>
                 <div class="mb-2 col-6">
                     <label class="form-label" for="name" style="font-weight: bold">Name</label>
-                    <input class="form-control" id="name" placeholder="Name" type="text">
+                    <input class="form-control" id="name" name="customerName" placeholder="Name" type="text">
                     <p><small class="text-danger pl-1" id="errorname"></small></p>
                 </div>
                 <div class="mb-2 col-6">
                     <label class="form-label" for="address" style="font-weight: bold">Address</label>
-                    <input class="form-control" id="address" placeholder="Address" type="text">
+                    <input class="form-control" id="address" name="customerAddress" placeholder="Address" type="text">
                     <p><small class="text-danger pl-1" id="erroraddress"></small></p>
                 </div>
                 <div class="mb-2 col-6">
                     <label class="form-label" for="telNo" style="font-weight: bold">Telephone No</label>
-                    <input class="form-control" id="telNo" placeholder="Telephone No" type="text">
+                    <input class="form-control" id="telNo" name="customerContact" placeholder="Telephone No" type="text">
                     <p><small class="text-danger pl-1" id="errortelNo"></small></p>
                 </div>
             </section>
@@ -452,10 +452,10 @@
         src="assets/bootstrap/js/bootstrap.bundle.min.js">
 
 </script>
-<script src="controller/dashBoardController.js"></script>
-<script src="controller/customerController.js"></script>
-<script src="controller/itemController.js"></script>
-<script src="controller/placeOrderController.js"></script>
+<script src="assets/js/dashBoardController.js"></script>
+<script src="assets/js/customerController.js"></script>
+<script src="assets/js/itemController.js"></script>
+<script src="assets/js/placeOrderController.js"></script>
 <script src="model/CustomerDTO.js"></script>
 <script src="model/ItemDTO.js"></script>
 <script src="model/OrderDTO.js"></script>
