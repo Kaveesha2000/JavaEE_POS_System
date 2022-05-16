@@ -1,0 +1,52 @@
+DROP DATABASE IF EXISTS WebSuperMarket;
+CREATE DATABASE IF NOT EXISTS WebSuperMarket;
+SHOW DATABASES ;
+USE WebSuperMarket;
+
+DROP TABLE IF EXISTS Customer;
+CREATE TABLE IF NOT EXISTS Customer(
+    custId VARCHAR (15),
+    custName VARCHAR(45) NOT NULL DEFAULT 'Unknown',
+    custAddress TEXT,
+    custContact VARCHAR (15),
+    CONSTRAINT PRIMARY KEY (custId)
+    );
+SHOW TABLES ;
+DESCRIBE Customer;
+
+DROP TABLE IF EXISTS Item;
+CREATE TABLE IF NOT EXISTS Item(
+     itemId VARCHAR(15),
+     itemName VARCHAR(45) NOT NULL DEFAULT 'Unknown',
+     unitPrice INT (5),
+     qtyOnHand INT (5),
+     CONSTRAINT PRIMARY KEY (itemId) 
+    );
+SHOW TABLES ;
+DESCRIBE Item;
+
+DROP TABLE IF EXISTS `Order`;
+CREATE TABLE IF NOT EXISTS `Order`(
+    orderID VARCHAR(15),
+    custId VARCHAR (15),
+    orderDate VARCHAR(10),
+    orderTime VARCHAR(15),
+    cost DOUBLE,
+    CONSTRAINT PRIMARY KEY (orderID),
+    CONSTRAINT FOREIGN KEY (custID) REFERENCES Customer (custID) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+SHOW TABLES ;
+DESCRIBE `Order`;
+
+DROP TABLE IF EXISTS `Order Detail`;
+CREATE TABLE IF NOT EXISTS `Order Detail`(
+    itemId VARCHAR(15),
+    orderID VARCHAR(15),
+    qty INT,
+    unitPrice DOUBLE,
+    CONSTRAINT PRIMARY KEY (orderID, itemId),
+    CONSTRAINT FOREIGN KEY (itemId) REFERENCES Item (itemId) ON DELETE CASCADE ON UPDATE CASCADE ,
+    CONSTRAINT FOREIGN KEY (orderID) REFERENCES `Order`(orderID) ON DELETE CASCADE ON UPDATE CASCADE
+    );
+SHOW TABLES ;
+DESCRIBE `Order Detail`;

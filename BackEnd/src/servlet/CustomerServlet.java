@@ -25,7 +25,7 @@ public class CustomerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         try {
-            System.out.println("Request Received from Customer");
+            //System.out.println("Request Received from Customer");
             String option = req.getParameter("option");
             resp.setContentType("application/json");
             Connection connection = ds.getConnection();
@@ -34,8 +34,40 @@ public class CustomerServlet extends HttpServlet {
             switch (option) {
                 case "SEARCH":
                     //write the code for customer search
+                    /*ResultSet rst = connection.prepareStatement("select * from Customer where CustId = ?").executeQuery();
+                    rst.setObject(1, customerID);*/
+                    String customerID = req.getParameter("custId");
+                    PreparedStatement pstm = connection.prepareStatement("select * from Customer where custId=?");
+                    pstm.setObject(1, customerID);
 
+                    ResultSet rst1 = pstm.executeQuery();
+
+                    while (rst1.next()) {
+                        String id = rst1.getString(1);
+                        String name = rst1.getString(2);
+                        String address = rst1.getString(3);
+                        String contact = rst1.getString(4);
+
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+
+                        objectBuilder.add("custId", id);
+                        objectBuilder.add("custName", name);
+                        objectBuilder.add("custAddress", address);
+                        objectBuilder.add("custContact", contact);
+
+                    }
+
+                    resp.setStatus(HttpServletResponse.SC_OK);
+
+                    JsonObjectBuilder response1 = Json.createObjectBuilder();
+
+                    response1.add("status", 200);
+                    response1.add("message", "Done");
+                    response1.add("data", "");
+
+                    writer.print(response1.build());
                     break;
+
                 case "GETALL":
                     ResultSet rst = connection.prepareStatement("select * from Customer").executeQuery();
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder(); // json array
@@ -76,7 +108,7 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("from customer servlet doPost method: " +req.getParameter("customerId"));
+        //System.out.println("from customer servlet doPost method: " +req.getParameter("customerId"));
         String customerID = req.getParameter("customerId");
         String customerName = req.getParameter("customerName");
         String customerAddress = req.getParameter("customerAddress");
@@ -94,7 +126,7 @@ public class CustomerServlet extends HttpServlet {
 
             if (pstm.executeUpdate() > 0) {
                 JsonObjectBuilder response = Json.createObjectBuilder();
-                resp.setStatus(HttpServletResponse.SC_OK);//201
+                resp.setStatus(HttpServletResponse.SC_OK);
                 response.add("status", 200);
                 response.add("message", "Successfully Added");
                 response.add("data", "");
