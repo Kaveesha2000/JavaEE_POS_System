@@ -194,10 +194,10 @@ public class ItemServlet extends HttpServlet {
         try {
             Connection connection = ds.getConnection();
             PreparedStatement pstm = connection.prepareStatement("Update item set itemName=?,unitPrice=?,qtyOnHand=? where  itemId=?");
-            pstm.setObject(1, itemId);
-            pstm.setObject(2, itemName);
-            pstm.setObject(3, unitPrice);
-            pstm.setObject(4, qtyOnHand);
+            pstm.setObject(1, itemName);
+            pstm.setObject(2, unitPrice);
+            pstm.setObject(3, qtyOnHand);
+            pstm.setObject(4, itemId);
             if (pstm.executeUpdate() > 0) {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("status", 200);
