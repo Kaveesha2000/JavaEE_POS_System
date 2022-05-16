@@ -115,7 +115,7 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String customerID = req.getParameter("customerId");
+        String customerID = req.getParameter("custId");
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
@@ -124,6 +124,7 @@ public class CustomerServlet extends HttpServlet {
             PreparedStatement pstm = connection.prepareStatement("Delete from Customer where custId=?");
             pstm.setObject(1, customerID);
 
+            System.out.println(customerID);
             if (pstm.executeUpdate() > 0) {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("status", 200);
