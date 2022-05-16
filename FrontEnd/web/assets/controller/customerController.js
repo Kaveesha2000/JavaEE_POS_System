@@ -180,17 +180,18 @@ $("#searchBtn").click(function () {
     let searchId = $("#exampleInputSearch").val();
 
     $.ajax({
-        url: "http://localhost:8080/backend/customer?option=SEARCH" + searchId,
+        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + searchId,
         method: "GET",
         success: function (res) {
             console.log(res);
             if (res.status == 200) {
+                let customer=res.data;
                 /*alert(res.message);
                 loadAllCustomers();*/
-                $("#id").val(res.id);
-                $("#name").val(res.name);
-                $("#address").val(res.address);
-                $("#telNo").val(res.contact);
+                $("#id").val(customer.custId);
+                $("#name").val(customer.custName);
+                $("#address").val(customer.custAddress);
+                $("#telNo").val(customer.custContact);
 
             } else {
                 alert(res.data);

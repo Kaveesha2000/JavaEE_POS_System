@@ -42,7 +42,8 @@ public class CustomerServlet extends HttpServlet {
 
                     ResultSet rst1 = pstm.executeQuery();
 
-                    while (rst1.next()) {
+
+                    if (rst1.next()) {
                         String id = rst1.getString(1);
                         String name = rst1.getString(2);
                         String address = rst1.getString(3);
@@ -54,20 +55,16 @@ public class CustomerServlet extends HttpServlet {
                         objectBuilder.add("custName", name);
                         objectBuilder.add("custAddress", address);
                         objectBuilder.add("custContact", contact);
+                        JsonObjectBuilder response1 = Json.createObjectBuilder();
 
+                        response1.add("status", 200);
+                        response1.add("message", "Done");
+                        response1.add("data", objectBuilder.build());
+
+                        writer.print(response1.build());
+                        resp.setStatus(HttpServletResponse.SC_OK);
                     }
-
-                    resp.setStatus(HttpServletResponse.SC_OK);
-
-                    JsonObjectBuilder response1 = Json.createObjectBuilder();
-
-                    response1.add("status", 200);
-                    response1.add("message", "Done");
-                    response1.add("data", "");
-
-                    writer.print(response1.build());
                     break;
-
                 case "GETALL":
                     ResultSet rst = connection.prepareStatement("select * from Customer").executeQuery();
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder(); // json array
