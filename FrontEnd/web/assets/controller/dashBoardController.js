@@ -31,11 +31,11 @@ $("#itemBtn").click(function () {
     $("#itemSection").css('display', 'block');
     $("#placeOrderSection").css('display', 'none');
 
-    if (itemDB.length>0){
+    /*if (itemDB.length>0){
         generateItemId();
     }else {
         $("#itemId").val("I00-0001");
-    }
+    }*/
     loadAllItems();
 })
 
@@ -67,6 +67,7 @@ $("#customerpicBtn").click(function () {
     $("#itemSection").css('display', 'none');
     $("#placeOrderSection").css('display', 'none');
 
+    loadAllCustomers();
     /*if (customerDB.length>0){
         generateCustomerId();
     }else {
@@ -80,7 +81,8 @@ $("#itempicBtn").click(function () {
     $("#itemSection").css('display', 'block');
     $("#placeOrderSection").css('display', 'none');
 
-    $("#tblItem").empty();
+    loadAllItems();
+    /*$("#tblItem").empty();
     for (let i = 0; i < itemDB.length; i++) {
         var row = `<tr><td>${itemDB[i].itemId}</td><td>${itemDB[i].itemName}</td><td>${itemDB[i].itemUnitPrice}</td><td>${itemDB[i].itemQTYOnHand}</td></tr>`;
         console.log(row);
@@ -91,7 +93,7 @@ $("#itempicBtn").click(function () {
         generateItemId();
     }else {
         $("#itemId").val("I00-0001");
-    }
+    }*/
 })
 
 $("#placeOrderpicBtn").click(function () {

@@ -133,11 +133,11 @@ $("#saveBtnItem").click(function () {
     loadAllItems();
     itemBorderColor();
     clearItemTextFields();
-    if (itemDB.length>0){
+    /*if (itemDB.length>0){
         generateItemId();
     }else {
         $("#itemId").val("I00-0001");
-    }
+    }*/
 });
 
 /*Update On Action*/
@@ -184,16 +184,26 @@ $("#searchBtnItem").click(function () {
 // Item CRUD Operation
 //START
 function saveItem() {
-    //gather customer information
-    let itemId = $("#itemId").val();
-    let itemName = $("#itemName").val();
-    let itemUnitPrice = $("#itemUnitPrice").val();
-    let itemQTYOnHand = $("#itemQTYOnHand").val();
+    var data = $("#itemForm").serialize();
+    $.ajax({
+        url: "http://localhost:8080/backend/item",
+        method: "POST",
+        data: data,// if we send data with the request
+        success: function (res) {
+            if (res.status == 200) {
+                alert(res.message);
+                loadAllItems();
+            } else {
+                alert(res.data);
+                loadAllItems();
+            }
 
-    //loadItemIds("<option>"+itemId+"</option>");
-
-    var itemDTO = new ItemDTO(itemId,itemName,itemUnitPrice,itemQTYOnHand);
-    itemDB.push(itemDTO);
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
+            loadAllItems();
+        }
+    });
 }
 
 function deleteItem() {
@@ -241,33 +251,18 @@ function updateItem() {
 
 function loadAllItems() {
     $("#tblItem").empty();
-    for (let i = 0; i < itemDB.length; i++) {
-        var row = `<tr><td>${itemDB[i].getItemId()}</td><td>${itemDB[i].getItemName()}</td><td>${itemDB[i].getItemUnitPrice()}</td><td>${itemDB[i].getQtyOnHand()}</td></tr>`;
-        //console.log(row);
-        $("#tblItem").append(row);
-    }
-
-    //disabling the row addings
-    $("#tblItem > tr").off('click');
-
-    rowClick();
-
-    $("#tblItem > tr").off('dblclick');
-
-    $("#tblItem > tr").dblclick(function () {
-        var index = -1;
-
-        for (var j = 0; j < itemDB.length; j++) {
-            if ($('#tblItem>tr').itemId==(itemDB[j].getItemId())){
-                console.log(itemDB[j].getItemId());
-                index = j;
+    $.ajax({
+        url: "http://localhost:8080/backend/item?option=GETALL",
+        method: "GET",
+        // dataType:"json", // please convert the response into JSON
+        success: function (resp) {
+            //console.log(resp);
+            for (const item of resp.data) {
+                let row = `<tr><td>${item.itemId}</td><td>${item.itemName}</td><td>${item.unitPrice}</td><td>${item.qtyOnHand}</td></tr>`;
+                $("#tblItem").append(row);
             }
+            bindClickEvents();
         }
-
-        itemDB.splice(index,1);
-        $(this).remove();
-        // clearing the text fields
-        clearItemTextFields();
     });
 }
 
@@ -290,4 +285,20 @@ function generateItemId() {
     } else {
         $("#itemId").val("I00-" + tempId);
     }
+}
+
+function bindClickEvents() {
+    $("#tblItem>tr").click(function () {
+        //Get values from the selected row
+        let itemId = $(this).children().eq(0).text();
+        let itemName = $(this).children().eq(1).text();
+        let unitPrice = $(this).children().eq(2).text();
+        let qtyOnHand = $(this).children().eq(3).text();
+
+        //Set values to the text-fields
+        $("#itemId").val(itemId);
+        $("#itemName").val(itemName);
+        $("#itemUnitPrice").val(unitPrice);
+        $("#itemQTYOnHand").val(qtyOnHand);
+    });
 }

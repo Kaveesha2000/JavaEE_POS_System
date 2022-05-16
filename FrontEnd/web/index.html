@@ -211,26 +211,26 @@
     </section>
     <!--Registration-->
     <section>
-        <form>
+        <form id="itemForm">
             <section class="row" style="width: 100%">
                 <div class="mb-2 col-6">
                     <label class="form-label" for="itemId" style="font-weight: bold">ID</label>
-                    <input aria-describedby="idHelp1" placeholder="ID" class="form-control" id="itemId" type="text">
+                    <input aria-describedby="idHelp1" placeholder="ID" class="form-control" id="itemId" name="itemId" type="text">
                     <p><small class="text-danger pl-1" id="errorItemid"></small></p>
                 </div>
                 <div class="mb-2 col-6">
                     <label class="form-label" for="itemName" style="font-weight: bold">Name</label>
-                    <input aria-describedby="nameHelp1" placeholder="Name" class="form-control" id="itemName" type="text">
+                    <input aria-describedby="nameHelp1" placeholder="Name" class="form-control" id="itemName" name="itemName" type="text">
                     <p><small class="text-danger pl-1" id="errorItemname"></small></p>
                 </div>
                 <div class="mb-2 col-6">
                     <label class="form-label" for="itemUnitPrice" style="font-weight: bold">Unit Price</label>
-                    <input aria-describedby="unitPriceHelp" placeholder="Unit Price" class="form-control" id="itemUnitPrice" type="text">
+                    <input aria-describedby="unitPriceHelp" placeholder="Unit Price" class="form-control" id="itemUnitPrice" name="unitPrice" type="text">
                     <p><small class="text-danger pl-1" id="errorItemUnitPrice"></small></p>
                 </div>
                 <div class="mb-2 col-6">
                     <label class="form-label" for="itemQTYOnHand" style="font-weight: bold">Quantity On Hand</label>
-                    <input aria-describedby="qtyOnHandHelp" placeholder="Quantity On Hand" class="form-control" id="itemQTYOnHand" type="text">
+                    <input aria-describedby="qtyOnHandHelp" placeholder="Quantity On Hand" class="form-control" id="itemQTYOnHand" name="qtyOnHand" type="text">
                     <p><small class="text-danger pl-1" id="errorItemQTYOnHand"></small></p>
                 </div>
             </section>
