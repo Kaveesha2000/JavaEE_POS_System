@@ -37,13 +37,6 @@ $("#placeOrderBtn").click(function () {
     $("#itemSection").css('display', 'none');
     $("#placeOrderSection").css('display', 'block');
 
-    /*$('#itemComboBox').empty();
-    loadItemIds("<option>None</option>");
-
-    for (let i = 0; i < itemDB.length; i++) {
-        loadItemIds("<option>"+itemDB[i].getItemId()+"</option>");
-    }*/
-
     generateOrderId();
 
 })

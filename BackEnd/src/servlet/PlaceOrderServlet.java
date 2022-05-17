@@ -40,13 +40,29 @@ public class PlaceOrderServlet extends HttpServlet {
 
                     break;
                 case "GENERATEORDERID":
-                    ResultSet rst2 = connection.prepareStatement("select orderId FROM `order` ORDER BY orderId DESC LIMIT 1").executeQuery();
-                    while (rst2.next()){
+                    ResultSet rst3 = connection.prepareStatement("select orderId FROM `order` ORDER BY orderId DESC LIMIT 1").executeQuery();
+                    while (rst3.next()){
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("orderId",rst2.getString(1));
+                        objectBuilder.add("orderId",rst3.getString(1));
                         writer.print(objectBuilder.build());
                     }
                     break;
+                /*case "LOADALLCUSTIDS":
+                    ResultSet rset = connection.prepareStatement("SELECT * FROM Customer").executeQuery();
+
+                    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
+                    while (rset.next()){
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("orderId",rset.getString(1));
+                        objectBuilder.add("cusId",rset.getString(2));
+                        objectBuilder.add("orderDate",rset.getString(3));
+                        objectBuilder.add("grossTotal",rset.getString(4));
+                        arrayBuilder.add(objectBuilder.build());
+
+                    }
+                    writer.write(String.valueOf(arrayBuilder.build()));
+                    break;*/
             }
             connection.close();
 

@@ -55,7 +55,7 @@ function generateOrderId() {
     $("#exampleInputId2").val("O00-0001");
 
     $.ajax({
-        url: "http://localhost:8080/backend/item?option=GENERATEORDERID",
+        url: "http://localhost:8080/backend/placeorder?option=GENERATEORDERID",
         method: "GET",
         success: function (resp) {
             var orderId = resp.orderId;
@@ -79,28 +79,14 @@ function generateOrderId() {
 
 //load customer data to text field
 $('#customerComboBox').click(function () {
+    loadAllCustomerIds();
     disableCustomerField();
-    var customerId = $('#customerComboBox').val();
-    for (let i = 0; i < customerDB.length; i++) {
-        if (customerDB[i].getCustomerId() == customerId) {
-            $('#customerName').val(customerDB[i].getCustomerName());
-            $('#exampleInputTelephoneNo2').val(customerDB[i].getCustomerTelNo());
-            $('#exampleInputAddress2').val(customerDB[i].getCustomerAddress());
-        }
-    }
 })
 
 //load item data to text field
 $('#itemComboBox').click(function () {
+    loadAllItemIds();
     disableItemField();
-    var itemId = $('#itemComboBox').val();
-    for (let i = 0; i < itemDB.length; i++) {
-        if (itemDB[i].getItemId() == itemId) {
-            $('#exampleInputName2').val(itemDB[i].getItemName());
-            $('#exampleInputUnitPrice2').val(itemDB[i].getItemUnitPrice());
-            $('#exampleInputQtyOnHand2').val(itemDB[i].getQtyOnHand);
-        }
-    }
 })
 
 //add to cart
@@ -243,6 +229,99 @@ $('#clearBtn').click(function () {
         $("#exampleInputId2").val("O00-0001");
     }
 })
+
+function loadAllCustomerIds() {
+    $("#customerComboBox").empty();
+    $("#customerComboBox").append($("<option></option>").attr("value", 0).text("Select ID"));
+
+    var customerIdsCount = 1;
+
+    $.ajax({
+        url: "http://localhost:8080/backend/customer?option=GETALL",
+        method: "GET",
+        success: function (resp) {
+            for (var customer of resp.data) {
+                $("#customerComboBox").append($("<option></option>").attr("value", customerIdsCount).text(customer.custId));
+                customerIdsCount++;
+            }
+        },
+        error: function (ob, statusText, error) {
+        }
+    });
+}
+
+$("#customerComboBox").click(function () {
+    /*var code = $("#customerComboBox").val();
+    $.ajax({
+        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + code,
+        method: "GET",
+        success: function (resp) {
+            $("#customerName").val(resp.custName);
+            $("#exampleInputTelephoneNo2").val(resp.custContact);
+            $("#exampleInputAddress2").val(resp.custAddress);
+        },
+        error: function (ob, statusText, error) {
+        }
+    });*/
+
+    var code = $("#customerComboBox").val();
+    $.ajax({
+        url: "http://localhost:8080/backend/customer?option=GETALL",
+        method: "GET",
+        success:function (res){
+            for (const customer of res.data){
+                if(customer.custId == code){
+
+                    $("#customerName").val(customer.custName);
+                    $("#exampleInputTelephoneNo2").val(customer.custContact);
+                    $("#exampleInputAddress2").val(customer.custAddress);
+                }
+            }
+        }
+    })
+    
+});
+
+function loadAllItemIds() {
+    $("#itemComboBox").empty();
+    $("#itemComboBox").append($("<option></option>").attr("value", 0).text("Select ID"));
+
+    var itemIdsCount = 1;
+
+    $.ajax({
+        url: "http://localhost:8080/backend/item?option=GETALL",
+        method: "GET",
+        success: function (resp) {
+            for (var item of resp.data) {
+                $("#itemComboBox").append($("<option></option>").attr("value", itemIdsCount).text(item.itemId));
+                itemIdsCount++;
+            }
+        },
+        error: function (ob, statusText, error) {
+        }
+    });
+}
+
+
+$("#itemComboBox").click(function () {
+
+    var code = $("#itemComboBox").val();
+    $.ajax({
+        url: "http://localhost:8080/backend/item?option=GETALL",
+        method: "GET",
+        success:function (res){
+            for (const item of res.data){
+                if(item.itemId == code){
+
+                    $("#exampleInputName2").val(item.itemName);
+                    $("#exampleInputUnitPrice2").val(item.unitPrice);
+                    $("#exampleInputQtyOnHand2").val(item.qtyOnHand);
+                }
+            }
+        }
+    })
+
+});
 
 //checking duplicates
 function checkDuplicates(itemCode) {
