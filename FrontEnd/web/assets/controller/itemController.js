@@ -133,6 +133,7 @@ $("#saveBtnItem").click(function () {
     loadAllItems();
     itemBorderColor();
     clearItemTextFields();
+    generateItemId();
     /*if (itemDB.length>0){
         generateItemId();
     }else {
@@ -145,6 +146,7 @@ $("#updateItem").click(function () {
     updateItem();
     loadAllItems();
     clearItemTextFields();
+    generateItemId();
     /*if (itemDB.length>0){
         generateItemId();
     }else {
@@ -157,6 +159,7 @@ $("#deleteBtnItem").click(function () {
     deleteItem();
     loadAllItems();
     clearItemTextFields();
+    generateItemId();
     /*if (itemDB.length>0){
         generateItemId();
     }else {
@@ -175,8 +178,6 @@ $("#searchBtnItem").click(function () {
             console.log(res);
             if (res.status == 200) {
                 let item = res.data;
-                /*alert(res.message);
-                loadAllCustomers();*/
                 $("#itemId").val(item.itemId);
                 $("#itemName").val(item.itemName);
                 $("#itemUnitPrice").val(item.unitPrice);
@@ -310,18 +311,29 @@ function loadItemIds(itemId) {
 
 //generate item id
 function generateItemId() {
-    var itemId = itemDB[itemDB.length - 1].getItemId();
-    var tempId = parseInt(itemId.split("-")[1]);
-    tempId = tempId + 1;
-    if (tempId <= 9) {
-        $("#itemId").val("I00-000" + tempId);
-    } else if (tempId <= 99) {
-        $("#itemId").val("I00-00" + tempId);
-    } else if (tempId <= 999) {
-        $("#itemId").val("I00-0" + tempId);
-    } else {
-        $("#itemId").val("I00-" + tempId);
-    }
+    $("#itemId").val("I00-0001");
+
+    $.ajax({
+        url: "http://localhost:8080/backend/item?option=GENERATEITEMID",
+        method: "GET",
+        success: function (resp) {
+            var itemId = resp.itemId;
+            var tempId = parseInt(itemId.split("-")[1]);
+            tempId = tempId + 1;
+            if (tempId <= 9) {
+                $("#itemId").val("I00-000" + tempId);
+            } else if (tempId <= 99) {
+                $("#itemId").val("I00-00" + tempId);
+            } else if (tempId <= 999) {
+                $("#itemId").val("I00-0" + tempId);
+            } else {
+                $("#itemId").val("I00-" + tempId);
+            }
+        },
+        error: function (ob, statusText, error) {
+        }
+
+    });
 }
 
 function bindClickEvents() {

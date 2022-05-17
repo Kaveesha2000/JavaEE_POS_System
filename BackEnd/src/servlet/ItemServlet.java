@@ -90,6 +90,14 @@ public class ItemServlet extends HttpServlet {
 
                     writer.print(response.build());
                     break;
+                case "GENERATEITEMID":
+                    ResultSet rst2 = connection.prepareStatement("select itemId FROM item ORDER BY itemId DESC LIMIT 1").executeQuery();
+                    while (rst2.next()){
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("itemId",rst2.getString(1));
+                        writer.print(objectBuilder.build());
+                    }
+                    break;
             }
             connection.close();
 
