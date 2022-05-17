@@ -91,6 +91,14 @@ public class CustomerServlet extends HttpServlet {
 
                     writer.print(response.build());
                     break;
+                case "GENERATECUSTOMERID":
+                    ResultSet rst2 = connection.prepareStatement("select custId FROM customer ORDER BY custId DESC LIMIT 1").executeQuery();
+                    while (rst2.next()){
+                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("custId",rst2.getString(1));
+                        writer.print(objectBuilder.build());
+                    }
+                    break;
             }
             connection.close();
 

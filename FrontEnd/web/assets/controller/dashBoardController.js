@@ -18,11 +18,7 @@ $("#customerBtn").click(function () {
     $("#placeOrderSection").css('display', 'none');
 
     loadAllCustomers();
-   /* if (customerDB.length>0){
-        generateCustomerId();
-    }else {
-        $("#id").val("C00-0001");
-    }*/
+    generateCustomerId();
 })
 
 $("#itemBtn").click(function () {
@@ -64,11 +60,7 @@ $("#customerpicBtn").click(function () {
     $("#placeOrderSection").css('display', 'none');
 
     loadAllCustomers();
-    /*if (customerDB.length>0){
-        generateCustomerId();
-    }else {
-        $("#id").val("C00-0001");
-    }*/
+    generateCustomerId();
 })
 
 $("#itempicBtn").click(function () {

@@ -126,13 +126,7 @@ $("#saveBtn").click(function () {
     saveCustomer();
     customerBorderColor();
     clearCustomerTextFields();
-    /*if (customerDB.length>0){
-        generateCustomerId();
-    }else {
-        $("#id").val("C00-0001");
-    }*/
-
-
+    generateCustomerId();
 });
 
 /*Update On Action*/
@@ -140,13 +134,7 @@ $("#updateBtn").click(function () {
     updateCustomer();
     loadAllCustomers();
     clearCustomerTextFields();
-    /*if (customerDB.length > 0) {
-        generateCustomerId();
-    } else {
-        $("#id").val("C00-0001");
-    }*/
-
-
+    generateCustomerId();
 });
 
 /*Delete On Action*/
@@ -154,12 +142,7 @@ $("#deleteBtn").click(function () {
     deleteCustomer();
     loadAllCustomers();
     clearCustomerTextFields();
-    /*if (customerDB.length > 0) {
-        generateCustomerId();
-    } else {
-        $("#id").val("C00-0001");
-    }*/
-
+    generateCustomerId();
 });
 
 /*Search On Action*/
@@ -174,8 +157,6 @@ $("#searchBtn").click(function () {
             console.log(res);
             if (res.status == 200) {
                 let customer = res.data;
-                /*alert(res.message);
-                loadAllCustomers();*/
                 $("#id").val(customer.custId);
                 $("#name").val(customer.custName);
                 $("#address").val(customer.custAddress);
@@ -250,8 +231,8 @@ function searchCustomer(searchID) {
         } else {
             return null;
         }
-    }*/
-    let customerID = $("#id").val();
+    }
+    let customerID = $("#id").val();*/
 }
 
 function updateCustomer() {
@@ -310,18 +291,29 @@ function loadCustomerIds(id) {
 
 //generate customer id
 function generateCustomerId() {
-    var customerId = customerDB[customerDB.length - 1].getCustomerId();
-    var tempId = parseInt(customerId.split("-")[1]);
-    tempId = tempId + 1;
-    if (tempId <= 9) {
-        $("#id").val("C00-000" + tempId);
-    } else if (tempId <= 99) {
-        $("#id").val("C00-00" + tempId);
-    } else if (tempId <= 999) {
-        $("#id").val("C00-0" + tempId);
-    } else {
-        $("#id").val("C00-" + tempId);
-    }
+    $("#id").val("C00-0001");
+
+    $.ajax({
+        url: "http://localhost:8080/backend/item?option=GENERATECUSTOMERID",
+        method: "GET",
+        success: function (resp) {
+            var custId = resp.custId;
+            var tempId = parseInt(custId.split("-")[1]);
+            tempId = tempId + 1;
+            if (tempId <= 9) {
+                $("#id").val("C00-000" + tempId);
+            } else if (tempId <= 99) {
+                $("#id").val("C00-00" + tempId);
+            } else if (tempId <= 999) {
+                $("#id").val("C00-0" + tempId);
+            } else {
+                $("#id").val("C00-" + tempId);
+            }
+        },
+        error: function (ob, statusText, error) {
+        }
+
+    });
 }
 
 function bindClickEvents() {
