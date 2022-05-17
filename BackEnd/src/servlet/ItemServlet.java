@@ -38,7 +38,7 @@ public class ItemServlet extends HttpServlet {
 
                     ResultSet rst1 = pstm.executeQuery();
 
-                    while (rst1.next()) {
+                    if (rst1.next()) {
                         String id = rst1.getString(1);
                         String itemName = rst1.getString(2);
                         String unitPrice = rst1.getString(3);
@@ -50,18 +50,15 @@ public class ItemServlet extends HttpServlet {
                         objectBuilder.add("itemName", itemName);
                         objectBuilder.add("unitPrice", unitPrice);
                         objectBuilder.add("qtyOnHand", qtyOnHand);
+                        JsonObjectBuilder response1 = Json.createObjectBuilder();
 
+                        response1.add("status", 200);
+                        response1.add("message", "Done");
+                        response1.add("data", objectBuilder.build());
+
+                        writer.print(response1.build());
+                        resp.setStatus(HttpServletResponse.SC_OK);
                     }
-
-                    resp.setStatus(HttpServletResponse.SC_OK);
-
-                    JsonObjectBuilder response1 = Json.createObjectBuilder();
-
-                    response1.add("status", 200);
-                    response1.add("message", "Done");
-                    response1.add("data", "");
-
-                    writer.print(response1.build());
                     break;
 
                 case "GETALL":

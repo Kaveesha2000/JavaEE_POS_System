@@ -166,19 +166,32 @@ $("#deleteBtnItem").click(function () {
 
 /*Search On Action*/
 $("#searchBtnItem").click(function () {
-    var searchID = $("#exampleInputSearch1").val();
-    var response = searchItem(searchID);
-    if (response!=null) {
-        $("#itemId").val(itemDB[response].getItemId());
-        $("#itemName").val(itemDB[response].getItemName());
-        $("#itemUnitPrice").val(itemDB[response].getItemUnitPrice());
-        $("#itemQTYOnHand").val(itemDB[response].getItemQty());
+    let searchId = $("#exampleInputSearch1").val();
 
-        $("#exampleInputSearch1").val('');
-    }else{
-        clearItemTextFields();
-        alert("No Such a Item");
-    }
+    $.ajax({
+        url: "http://localhost:8080/backend/item?option=SEARCH&itemId=" + searchId,
+        method: "GET",
+        success: function (res) {
+            console.log(res);
+            if (res.status == 200) {
+                let item = res.data;
+                /*alert(res.message);
+                loadAllCustomers();*/
+                $("#itemId").val(item.itemId);
+                $("#itemName").val(item.itemName);
+                $("#itemUnitPrice").val(item.unitPrice);
+                $("#itemQTYOnHand").val(item.qtyOnHand);
+
+            } else {
+                alert(res.data);
+            }
+
+        },
+        error: function (ob, status, t) {
+            alert("Error");
+            loadAllItems();
+        }
+    });
 });
 
 // Item CRUD Operation

@@ -164,19 +164,7 @@ $("#deleteBtn").click(function () {
 
 /*Search On Action*/
 $("#searchBtn").click(function () {
-    /*var searchID = $("#exampleInputSearch").val();
-    var response = searchCustomer(searchID);
-    if (response != null) {
-        $("#id").val(customerDB[response].getCustomerId());
-        $("#name").val(customerDB[response].getCustomerName());
-        $("#address").val(customerDB[response].getCustomerAddress());
-        $("#telNo").val(customerDB[response].getCustomerTelNo());
 
-        $("#exampleInputSearch").val('');
-    } else {
-        clearCustomerTextFields();
-        alert("No Such a Customer");
-    }*/
     let searchId = $("#exampleInputSearch").val();
 
     $.ajax({
@@ -185,7 +173,7 @@ $("#searchBtn").click(function () {
         success: function (res) {
             console.log(res);
             if (res.status == 200) {
-                let customer=res.data;
+                let customer = res.data;
                 /*alert(res.message);
                 loadAllCustomers();*/
                 $("#id").val(customer.custId);

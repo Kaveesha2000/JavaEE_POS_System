@@ -33,9 +33,6 @@ public class CustomerServlet extends HttpServlet {
 
             switch (option) {
                 case "SEARCH":
-                    //write the code for customer search
-                    /*ResultSet rst = connection.prepareStatement("select * from Customer where CustId = ?").executeQuery();
-                    rst.setObject(1, customerID);*/
                     String customerID = req.getParameter("custId");
                     PreparedStatement pstm = connection.prepareStatement("select * from Customer where custId=?");
                     pstm.setObject(1, customerID);
