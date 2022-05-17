@@ -52,18 +52,29 @@ $("#discountComboBox").keyup(function () {
 
 //generate order id
 function generateOrderId() {
-    var orderId = orderDB[orderDB.length - 1].getOrderId();
-    var tempId = parseInt(orderId.split("-")[1]);
-    tempId = tempId + 1;
-    if (tempId <= 9) {
-        $("#exampleInputId2").val("O00-000" + tempId);
-    } else if (tempId <= 99) {
-        $("#exampleInputId2").val("O00-00" + tempId);
-    } else if (tempId <= 999) {
-        $("#exampleInputId2").val("O00-0" + tempId);
-    } else {
-        $("#exampleInputId2").val("O00-" + tempId);
-    }
+    $("#exampleInputId2").val("O00-0001");
+
+    $.ajax({
+        url: "http://localhost:8080/backend/item?option=GENERATEORDERID",
+        method: "GET",
+        success: function (resp) {
+            var orderId = resp.orderId;
+            var tempId = parseInt(orderId.split("-")[1]);
+            tempId = tempId + 1;
+            if (tempId <= 9) {
+                $("#exampleInputId2").val("O00-000" + tempId);
+            } else if (tempId <= 99) {
+                $("#exampleInputId2").val("O00-00" + tempId);
+            } else if (tempId <= 999) {
+                $("#exampleInputId2").val("O00-0" + tempId);
+            } else {
+                $("#exampleInputId2").val("O00-" + tempId);
+            }
+        },
+        error: function (ob, statusText, error) {
+        }
+
+    });
 }
 
 //load customer data to text field
