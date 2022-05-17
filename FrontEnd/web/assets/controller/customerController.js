@@ -126,7 +126,6 @@ $("#saveBtn").click(function () {
     saveCustomer();
     customerBorderColor();
     clearCustomerTextFields();
-    generateCustomerId();
 });
 
 /*Update On Action*/
@@ -134,7 +133,6 @@ $("#updateBtn").click(function () {
     updateCustomer();
     loadAllCustomers();
     clearCustomerTextFields();
-    generateCustomerId();
 });
 
 /*Delete On Action*/
@@ -142,7 +140,6 @@ $("#deleteBtn").click(function () {
     deleteCustomer();
     loadAllCustomers();
     clearCustomerTextFields();
-    generateCustomerId();
 });
 
 /*Search On Action*/
@@ -186,6 +183,7 @@ function saveCustomer() {
             if (res.status == 200) {
                 alert(res.message);
                 loadAllCustomers();
+                generateCustomerId();
             } else {
                 alert(res.data);
                 loadAllCustomers();
@@ -210,6 +208,7 @@ function deleteCustomer() {
             if (res.status == 200) {
                 alert(res.message);
                 loadAllCustomers();
+                generateCustomerId();
             } else if (res.status == 400) {
                 alert(res.data);
             } else {
@@ -252,6 +251,7 @@ function updateCustomer() {
             if (res.status == 200) { // process is  ok
                 alert(res.message);
                 loadAllCustomers();
+                generateCustomerId();
             } else if (res.status == 400) { // there is a problem with the client side
                 alert(res.message);
             } else {
@@ -279,7 +279,7 @@ function loadAllCustomers() {
                 let row = `<tr><td>${customer.custId}</td><td>${customer.custName}</td><td>${customer.custAddress}</td><td>${customer.custContact}</td></tr>`;
                 $("#tblCustomer").append(row);
             }
-            bindClickEvents();
+            custBindClickEvents();
         }
     });
 }
@@ -294,21 +294,22 @@ function generateCustomerId() {
     $("#id").val("C00-0001");
 
     $.ajax({
-        url: "http://localhost:8080/backend/item?option=GENERATECUSTOMERID",
+        url: "http://localhost:8080/backend/customer?option=GENERATECUSTOMERID",
         method: "GET",
         success: function (resp) {
             var custId = resp.custId;
-            var tempId = parseInt(custId.split("-")[1]);
-            tempId = tempId + 1;
-            if (tempId <= 9) {
-                $("#id").val("C00-000" + tempId);
-            } else if (tempId <= 99) {
-                $("#id").val("C00-00" + tempId);
-            } else if (tempId <= 999) {
-                $("#id").val("C00-0" + tempId);
-            } else {
-                $("#id").val("C00-" + tempId);
-            }
+                var tempId = parseInt(custId.split("-")[1]);
+                tempId = tempId + 1;
+                if (tempId <= 9) {
+                    $("#id").val("C00-000" + tempId);
+                } else if (tempId <= 99) {
+                    $("#id").val("C00-00" + tempId);
+                } else if (tempId <= 999) {
+                    $("#id").val("C00-0" + tempId);
+                } else {
+                    $("#id").val("C00-" + tempId);
+                }
+
         },
         error: function (ob, statusText, error) {
         }
@@ -316,7 +317,7 @@ function generateCustomerId() {
     });
 }
 
-function bindClickEvents() {
+function custBindClickEvents() {
     $("#tblCustomer>tr").click(function () {
         //Get values from the selected row
         let id = $(this).children().eq(0).text();

@@ -130,41 +130,22 @@ function rowClick() {
 /*Save On Action*/
 $("#saveBtnItem").click(function () {
     saveItem();
-    loadAllItems();
     itemBorderColor();
     clearItemTextFields();
-    generateItemId();
-    /*if (itemDB.length>0){
-        generateItemId();
-    }else {
-        $("#itemId").val("I00-0001");
-    }*/
 });
 
 /*Update On Action*/
 $("#updateItem").click(function () {
     updateItem();
-    loadAllItems();
+    itemBorderColor();
     clearItemTextFields();
-    generateItemId();
-    /*if (itemDB.length>0){
-        generateItemId();
-    }else {
-        $("#itemId").val("I00-0001");
-    }*/
 })
 
 /*Delete On Action*/
 $("#deleteBtnItem").click(function () {
     deleteItem();
-    loadAllItems();
+    itemBorderColor();
     clearItemTextFields();
-    generateItemId();
-    /*if (itemDB.length>0){
-        generateItemId();
-    }else {
-        $("#itemId").val("I00-0001");
-    }*/
 })
 
 /*Search On Action*/
@@ -207,6 +188,7 @@ function saveItem() {
             if (res.status == 200) {
                 alert(res.message);
                 loadAllItems();
+                generateItemId();
             } else {
                 alert(res.data);
                 loadAllItems();
@@ -231,6 +213,7 @@ function deleteItem() {
             if (res.status == 200) {
                 alert(res.message);
                 loadAllItems();
+                generateItemId();
             } else if (res.status == 400) {
                 alert(res.data);
             } else {
@@ -273,6 +256,7 @@ function updateItem() {
             if (res.status == 200) { // process is  ok
                 alert(res.message);
                 loadAllItems();
+                generateItemId();
             } else if (res.status == 400) { // there is a problem with the client side
                 alert(res.message);
             } else {
@@ -299,7 +283,7 @@ function loadAllItems() {
                 let row = `<tr><td>${item.itemId}</td><td>${item.itemName}</td><td>${item.unitPrice}</td><td>${item.qtyOnHand}</td></tr>`;
                 $("#tblItem").append(row);
             }
-            bindClickEvents();
+            itemBindClickEvents();
         }
     });
 }
@@ -336,7 +320,7 @@ function generateItemId() {
     });
 }
 
-function bindClickEvents() {
+function itemBindClickEvents() { //duplicataed controllers dekk ekama name eka tyenn brid?
     $("#tblItem>tr").click(function () {
         //Get values from the selected row
         let itemId = $(this).children().eq(0).text();

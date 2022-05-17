@@ -78,14 +78,15 @@ function generateOrderId() {
 }
 
 //load customer data to text field
+//this approach has a problem
+loadAllCustomerIds();
 $('#customerComboBox').click(function () {
-    loadAllCustomerIds();
     disableCustomerField();
 })
 
 //load item data to text field
+loadAllItemIds();
 $('#itemComboBox').click(function () {
-    loadAllItemIds();
     disableItemField();
 })
 
@@ -223,11 +224,7 @@ function clearTableAndFinalTotals() {
 $('#clearBtn').click(function () {
     clearTextFields();
     clearTableAndFinalTotals();
-    if (orderDB.length > 0) {
-        generateOrderId();
-    } else {
-        $("#exampleInputId2").val("O00-0001");
-    }
+    generateOrderId();
 })
 
 function loadAllCustomerIds() {
@@ -251,35 +248,43 @@ function loadAllCustomerIds() {
 }
 
 $("#customerComboBox").click(function () {
-    /*var code = $("#customerComboBox").val();
-    $.ajax({
-        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + code,
-        method: "GET",
-        success: function (resp) {
-            $("#customerName").val(resp.custName);
-            $("#exampleInputTelephoneNo2").val(resp.custContact);
-            $("#exampleInputAddress2").val(resp.custAddress);
-        },
-        error: function (ob, statusText, error) {
-        }
-    });*/
+    var searchId = $("#customerComboBox").find(":selected").text();
+    console.log(searchId);
 
-    var code = $("#customerComboBox").val();
     $.ajax({
-        url: "http://localhost:8080/backend/customer?option=GETALL",
+        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + searchId,
         method: "GET",
-        success:function (res){
-            for (const customer of res.data){
-                if(customer.custId == code){
+        success: function (res) {
+            console.log(res);
+            if (res.status == 200) {
+                let customer = res.data;
+                $("#customerName").val(customer.custName);
+                $("#exampleInputTelephoneNo2").val(customer.custContact);
+                $("#exampleInputAddress2").val(customer.custAddress);
 
-                    $("#customerName").val(customer.custName);
-                    $("#exampleInputTelephoneNo2").val(customer.custContact);
-                    $("#exampleInputAddress2").val(customer.custAddress);
-                }
+            } else {
+                alert(res.data);
             }
         }
-    })
-    
+        });
+
+
+    // $.ajax({
+    //     url: "http://localhost:8080/backend/customer?option=GETALL",
+    //     method: "GET",
+    //     success:function (res){
+    //         for (const customer of res.data){
+    //             if(customer.custId == code){
+    //
+    //                 $("#customerName").val(customer.custName);
+    //                 $("#exampleInputTelephoneNo2").val(customer.custContact);
+    //                 $("#exampleInputAddress2").val(customer.custAddress);
+    //             }
+    //         }
+    //     }
+    // })
+
+
 });
 
 function loadAllItemIds() {
@@ -304,22 +309,29 @@ function loadAllItemIds() {
 
 
 $("#itemComboBox").click(function () {
+    var code =$("#itemComboBox").find(":selected").text();
+    console.log(code);
+    //ko meke seach eka..?ekata ghuwe nha mn customer eke withri nkn ghala bluwe
+    //ok
+     $.ajax({
+         url: "http://localhost:8080/backend/item?option=GETALL",
+         method: "GET",
+         success:function (res){
+             for (const item of res.data){
 
-    var code = $("#itemComboBox").val();
-    $.ajax({
-        url: "http://localhost:8080/backend/item?option=GETALL",
-        method: "GET",
-        success:function (res){
-            for (const item of res.data){
-                if(item.itemId == code){
+                 if(item.itemId == code){
+                     console.log(item.itemId);
+                     console.log(item.itemName);
+                     console.log(item.unitPrice);
+                     console.log(item.qtyOnHand);
 
-                    $("#exampleInputName2").val(item.itemName);
-                    $("#exampleInputUnitPrice2").val(item.unitPrice);
-                    $("#exampleInputQtyOnHand2").val(item.qtyOnHand);
-                }
-            }
+                     $("#exampleInputName2").val(item.itemName);
+                     $("#exampleInputUnitPrice2").val(item.unitPrice);
+                     $("#exampleInputQtyOnHand2").val(item.qtyOnHand);
+                 }
+             }
         }
-    })
+     })
 
 });
 
