@@ -223,17 +223,6 @@ function deleteCustomer() {
     });
 }
 
-function searchCustomer(searchID) {
-    /*for (let i = 0; i < customerDB.length; i++) {
-        if (customerDB[i].getCustomerId() == searchID) {
-            return i;
-        } else {
-            return null;
-        }
-    }
-    let customerID = $("#id").val();*/
-}
-
 function updateCustomer() {
     var customerOb = {
         id: $("#id").val(),
@@ -245,21 +234,20 @@ function updateCustomer() {
     $.ajax({
         url: "http://localhost:8080/backend/customer",
         method: "PUT",
-        contentType: "application/json", //You should state request's content type using MIME types
-        data: JSON.stringify(customerOb), // format js object to valid json string
+        contentType: "application/json",
+        data: JSON.stringify(customerOb),
         success: function (res) {
-            if (res.status == 200) { // process is  ok
+            if (res.status == 200) {
                 alert(res.message);
                 loadAllCustomers();
                 generateCustomerId();
-            } else if (res.status == 400) { // there is a problem with the client side
+            } else if (res.status == 400) {
                 alert(res.message);
             } else {
-                alert(res.data); // else maybe there is an exception
+                alert(res.data);
             }
         },
         error: function (ob, errorStus) {
-            //console.log(ob); // other errors
             alert(ob);
         }
     });
@@ -272,9 +260,7 @@ function loadAllCustomers() {
     $.ajax({
         url: "http://localhost:8080/backend/customer?option=GETALL",
         method: "GET",
-        // dataType:"json", // please convert the response into JSON
         success: function (resp) {
-            //console.log(resp);
             for (const customer of resp.data) {
                 let row = `<tr><td>${customer.custId}</td><td>${customer.custName}</td><td>${customer.custAddress}</td><td>${customer.custContact}</td></tr>`;
                 $("#tblCustomer").append(row);
@@ -282,11 +268,6 @@ function loadAllCustomers() {
             custBindClickEvents();
         }
     });
-}
-
-//load all customerIds to the combo box
-function loadCustomerIds(id) {
-    $('#customerComboBox').append(id);
 }
 
 //generate customer id
@@ -319,13 +300,11 @@ function generateCustomerId() {
 
 function custBindClickEvents() {
     $("#tblCustomer>tr").click(function () {
-        //Get values from the selected row
         let id = $(this).children().eq(0).text();
         let name = $(this).children().eq(1).text();
         let address = $(this).children().eq(2).text();
         let contact = $(this).children().eq(3).text();
 
-        //Set values to the text-fields
         $("#id").val(id);
         $("#name").val(name);
         $("#address").val(address);
