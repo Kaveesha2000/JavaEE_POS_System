@@ -78,14 +78,11 @@ function generateOrderId() {
 }
 
 //load customer data to text field
-//this approach has a problem
-loadAllCustomerIds();
 $('#customerComboBox').click(function () {
     disableCustomerField();
 })
 
 //load item data to text field
-loadAllItemIds();
 $('#itemComboBox').click(function () {
     disableItemField();
 })
@@ -163,12 +160,12 @@ function loadCart() {
     qtyOnHand = qtyOnHand - orderqty;
 
     //updating qty
-    for (let i = 0; i < itemDB.length; i++) {
+    /*for (let i = 0; i < itemDB.length; i++) {
         if ($('#itemComboBox').val() == itemDB[i].getItemId()) {
             itemDB[i].setQtyOnHand(qtyOnHand);
             //console.log(qtyOnHand);
         }
-    }
+    }*/
     //checking duplicates
     var newQty = 0;
     var newTotal = 0;

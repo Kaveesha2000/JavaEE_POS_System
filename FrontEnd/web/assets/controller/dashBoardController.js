@@ -38,6 +38,8 @@ $("#placeOrderBtn").click(function () {
     $("#placeOrderSection").css('display', 'block');
 
     generateOrderId();
+    loadAllCustomerIds();
+    loadAllItemIds();
 
 })
 
@@ -77,5 +79,6 @@ $("#placeOrderpicBtn").click(function () {
     $("#placeOrderSection").css('display', 'block');
 
     generateOrderId();
-
+    loadAllCustomerIds();
+    loadAllItemIds();
 })

@@ -110,7 +110,6 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //System.out.println("from customer servlet doPost method: " +req.getParameter("customerId"));
         String customerID = req.getParameter("customerId");
         String customerName = req.getParameter("customerName");
         String customerAddress = req.getParameter("customerAddress");
