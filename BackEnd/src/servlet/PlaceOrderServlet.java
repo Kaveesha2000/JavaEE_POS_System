@@ -58,7 +58,7 @@ public class PlaceOrderServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            //System.out.println("Request Received from Customer");
+
             String option = req.getParameter("option");
             PrintWriter writer = resp.getWriter();
             resp.setContentType("application/json");

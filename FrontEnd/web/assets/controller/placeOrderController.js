@@ -150,22 +150,14 @@ $('#purchaseBtn').click(function () {
 var fullTotal = 0;
 
 function loadCart() {
-    var itemCode = $('#itemComboBox').val();
+    var itemCode = $('#itemComboBox option:selected').text();
     var itemName = $('#exampleInputName2').val();
     var price = $('#exampleInputUnitPrice2').val();
     var orderqty = $('#exampleInputOrderQty').val();
     var qtyOnHand = $('#exampleInputQtyOnHand2').val();
 
     var total = 0;
-    qtyOnHand = qtyOnHand - orderqty;
 
-    //updating qty
-    /*for (let i = 0; i < itemDB.length; i++) {
-        if ($('#itemComboBox').val() == itemDB[i].getItemId()) {
-            itemDB[i].setQtyOnHand(qtyOnHand);
-            //console.log(qtyOnHand);
-        }
-    }*/
     //checking duplicates
     var newQty = 0;
     var newTotal = 0;
@@ -306,31 +298,53 @@ function loadAllItemIds() {
 
 
 $("#itemComboBox").click(function () {
-    var code =$("#itemComboBox").find(":selected").text();
-    console.log(code);
-    //ko meke seach eka..?ekata ghuwe nha mn customer eke withri nkn ghala bluwe
-    //ok
-     $.ajax({
-         url: "http://localhost:8080/backend/item?option=GETALL",
-         method: "GET",
-         success:function (res){
-             for (const item of res.data){
-
-                 if(item.itemId == code){
-                     console.log(item.itemId);
-                     console.log(item.itemName);
-                     console.log(item.unitPrice);
-                     console.log(item.qtyOnHand);
-
-                     $("#exampleInputName2").val(item.itemName);
-                     $("#exampleInputUnitPrice2").val(item.unitPrice);
-                     $("#exampleInputQtyOnHand2").val(item.qtyOnHand);
-                 }
-             }
-        }
-     })
-
+    selectionDataLoadOfItem();
 });
+
+function selectionDataLoadOfItem() {
+    var code =$("#itemComboBox").find(":selected").text();
+
+    $.ajax({
+        url: "http://localhost:8080/backend/item?option=GETALL",
+        method: "GET",
+        success:function (res){
+            for (const item of res.data){
+
+                if(item.itemId == code){
+                    console.log(code)
+
+                    var oldQty = 0;
+
+                    if ($('#tblPlaceOrder tr').length==0){
+                        console.log("mmmmmm");
+                        $("#exampleInputQtyOnHand2").val(item.qtyOnHand);
+                    }else {
+                        console.log("ddddd");
+                        for (let i = 0; i < $('#tblPlaceOrder tr').length; i++) {
+                            console.log("cccccc");
+                            console.log(code);
+                            console.log(item.itemId);
+                            if (code == $('#tblPlaceOrder').children().eq(i).children().eq(0).text()) {
+                                console.log("eeeeeeeeeee");
+                                console.log(i);
+                                oldQty = parseInt($($('#tblPlaceOrder tr').eq(i).children(":eq(3)")).text());
+                                console.log(oldQty);
+                                $("#exampleInputQtyOnHand2").val(item.qtyOnHand-oldQty);
+                            }else {
+                                console.log("ttttttt");
+                                $("#exampleInputQtyOnHand2").val(item.qtyOnHand);
+                            }
+                        }
+                    }
+
+                    $("#exampleInputName2").val(item.itemName);
+                    $("#exampleInputUnitPrice2").val(item.unitPrice);
+
+                }
+            }
+        }
+    })
+}
 
 //checking duplicates
 function checkDuplicates(itemCode) {
