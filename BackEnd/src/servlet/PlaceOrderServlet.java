@@ -1,9 +1,7 @@
 package servlet;
 
 import javax.annotation.Resource;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -64,19 +62,19 @@ public class PlaceOrderServlet extends HttpServlet {
             resp.setContentType("application/json");
             Connection connection = ds.getConnection();
 
+            JsonReader reader = Json.createReader(req.getReader());
+            JsonObject jsonObject = reader.readObject();
+
             switch (option) {
                 case "ADDOREDER":
-                    String orderId = req.getParameter("orderId");
-                    String custId = req.getParameter("customerComboBox");
-                    String orderDate = req.getParameter("orderDate");
-                    String cost = req.getParameter("cost");
 
                     try {
                         PreparedStatement pstm = connection.prepareStatement("Insert into `Order` values(?,?,?,?)");
-                        pstm.setObject(1, orderId);
-                        pstm.setObject(2, custId);
-                        pstm.setObject(3, orderDate);
-                        pstm.setObject(4, cost);
+                        pstm.setObject(1,jsonObject.getString("oId"));
+                        pstm.setObject(2,jsonObject.getString("cId"));
+                        pstm.setObject(3,jsonObject.getString("date"));
+                        pstm.setObject(4,jsonObject.getInt("fullTotal"));
+                        System.out.println(jsonObject);
 
                         if (pstm.executeUpdate() > 0) {
                             JsonObjectBuilder response = Json.createObjectBuilder();
