@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `Order`(
     orderId VARCHAR(15),
     custId VARCHAR (15),
     orderDate VARCHAR(10),
+    discount VARCHAR(10),
     cost DOUBLE,
     CONSTRAINT PRIMARY KEY (orderId),
     CONSTRAINT FOREIGN KEY (custId) REFERENCES Customer (custId) ON DELETE CASCADE ON UPDATE CASCADE

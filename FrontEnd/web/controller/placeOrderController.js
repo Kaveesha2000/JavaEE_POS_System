@@ -148,6 +148,7 @@ function purchaseOrder() {
             oId: oId,
             cId: cId,
             date: date,
+            discount:discount,
             fullTotal: fullTotal
         }
 

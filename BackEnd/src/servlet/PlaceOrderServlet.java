@@ -69,11 +69,12 @@ public class PlaceOrderServlet extends HttpServlet {
                 case "ADDOREDER":
 
                     try {
-                        PreparedStatement pstm = connection.prepareStatement("Insert into `Order` values(?,?,?,?)");
+                        PreparedStatement pstm = connection.prepareStatement("Insert into `Order` values(?,?,?,?,?)");
                         pstm.setObject(1,jsonObject.getString("oId"));
                         pstm.setObject(2,jsonObject.getString("cId"));
                         pstm.setObject(3,jsonObject.getString("date"));
-                        pstm.setObject(4,jsonObject.getInt("fullTotal"));
+                        pstm.setObject(4,jsonObject.getInt("discount"));
+                        pstm.setObject(5,jsonObject.getInt("fullTotal"));
                         System.out.println(jsonObject);
 
                         if (pstm.executeUpdate() > 0) {
