@@ -5,8 +5,8 @@ import entity.Item;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public interface ItemDAO extends CrudDAO<Item,String, Connection> {
-    boolean ifItemExist(String code) throws SQLException, ClassNotFoundException;
-    String generateNewID() throws SQLException, ClassNotFoundException;
+    List<String> getIds(Connection connection) throws SQLException;
 }

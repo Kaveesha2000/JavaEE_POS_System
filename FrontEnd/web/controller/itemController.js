@@ -179,11 +179,18 @@ $("#searchBtnItem").click(function () {
 // Item CRUD Operation
 //START
 function saveItem() {
-    var data = $("#itemForm").serialize();
+    var itemDetail = {
+        itemId: $("#itemId").val(),
+        itemName: $("#itemName").val(),
+        unitPrice: $("#itemUnitPrice").val(),
+        qtyOnHand: $("#itemQTYOnHand").val(),
+    }
+
     $.ajax({
         url: "http://localhost:8080/backend/item",
         method: "POST",
-        data: data,
+        contentType: "application/json",
+        data: JSON.stringify(itemDetail),
         success: function (res) {
             if (res.status == 200) {
                 alert(res.message);
@@ -229,8 +236,8 @@ function deleteItem() {
 
 function updateItem() {
     var itemOb = {
-        id: $("#itemId").val(),
-        name: $("#itemName").val(),
+        itemId: $("#itemId").val(),
+        itemName: $("#itemName").val(),
         unitPrice: $("#itemUnitPrice").val(),
         qtyOnHand: $("#itemQTYOnHand").val()
     }
@@ -264,7 +271,7 @@ function loadAllItems() {
         url: "http://localhost:8080/backend/item?option=GETALL",
         method: "GET",
         success: function (resp) {
-            for (const item of resp.data) {
+            for (const item of resp) {
                 let row = `<tr><td>${item.itemId}</td><td>${item.itemName}</td><td>${item.unitPrice}</td><td>${item.qtyOnHand}</td></tr>`;
                 $("#tblItem").append(row);
             }

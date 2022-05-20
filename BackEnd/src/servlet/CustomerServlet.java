@@ -75,7 +75,7 @@ public class CustomerServlet extends HttpServlet {
                         objectBuilder2.add("custId",id);
                         writer.print(objectBuilder2.build());
                     }
-
+                    break;
             }
             connection.close();
 
