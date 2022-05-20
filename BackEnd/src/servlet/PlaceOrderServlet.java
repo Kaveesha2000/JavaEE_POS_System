@@ -99,10 +99,8 @@ public class PlaceOrderServlet extends HttpServlet {
         try {
 
             Connection  connection = ds.getConnection();
-            System.out.println("Methd invoked");
             ArrayList<OrderDetailDTO> orderDetailDTO = new ArrayList<>();
             for (JsonValue item : items) {
-                System.out.println(item);
                 JsonObject jo = item.asJsonObject();
                         orderDetailDTO.add(new OrderDetailDTO(
                                 jo.getString("itemId"),
@@ -122,7 +120,6 @@ public class PlaceOrderServlet extends HttpServlet {
             );
 
             if (placeOrderBO.placeOrder(orderDTO,connection)) {
-                System.out.println("Order Aded");
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message", "Successfully Purchased Order.");
@@ -135,7 +132,6 @@ public class PlaceOrderServlet extends HttpServlet {
 
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_OK);
-            System.out.println("Exception Aded");
 
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
             objectBuilder.add("data",e.getLocalizedMessage());
