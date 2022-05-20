@@ -74,11 +74,6 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public int countCustomer(Connection connection) throws SQLException {
-        return 0;
-    }
-
-    @Override
     public List<String> getIds(Connection connection) throws SQLException {
         ResultSet rst = CrudUtil.executeQuery("SELECT custId FROM Customer ORDER BY custId DESC LIMIT 1",
                 connection

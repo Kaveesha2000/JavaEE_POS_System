@@ -2,7 +2,6 @@ package dao.impl;
 
 import dao.CrudUtil;
 import dao.custom.ItemDAO;
-import entity.Customer;
 import entity.Item;
 
 import java.sql.Connection;
@@ -71,18 +70,6 @@ public class ItemDAOImpl implements ItemDAO {
             ));
         }
         return items;
-    }
-
-    @Override
-    public int countItems(Connection connection) throws SQLException {
-        ResultSet rst = CrudUtil.executeQuery("SELECT COUNT(*) FROM Item",
-                connection
-        );
-        int count = 0;
-        while (rst.next()){
-            count = rst.getInt(1);
-        }
-        return count;
     }
 
     @Override

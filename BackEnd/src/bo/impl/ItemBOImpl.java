@@ -2,11 +2,8 @@ package bo.impl;
 
 import bo.custom.ItemBO;
 import dao.DAOFactory;
-import dao.custom.CustomerDAO;
 import dao.custom.ItemDAO;
-import dto.CustomerDTO;
 import dto.ItemDTO;
-import entity.Customer;
 import entity.Item;
 
 import java.sql.Connection;
@@ -73,11 +70,6 @@ public class ItemBOImpl implements ItemBO {
             ));
         }
         return allItem;
-    }
-
-    @Override
-    public int countItem(Connection connection) throws SQLException {
-        return 0;
     }
 
     @Override

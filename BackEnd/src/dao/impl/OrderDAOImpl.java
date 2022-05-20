@@ -68,28 +68,4 @@ public class OrderDAOImpl implements OrderDAO {
             return null;
         }
     }
-
-    @Override
-    public int countOrders(Connection connection) throws SQLException {
-        ResultSet rst = CrudUtil.executeQuery("SELECT COUNT(*) FROM `Order`",
-                connection
-        );
-        if (rst.next()){
-            return rst.getInt(1);
-        }else {
-            return 0;
-        }
-    }
-
-    @Override
-    public double findNetTotal(Connection connection) throws SQLException {
-        ResultSet rst = CrudUtil.executeQuery("SELECT SUM(netTotal) FROM `Order`",
-                connection
-        );
-        if (rst.next()){
-            return rst.getDouble(1);
-        }else {
-            return 0;
-        }
-    }
 }

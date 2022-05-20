@@ -81,16 +81,6 @@ public class PurchaseOrderBOImpl implements PurchaseOrderBO {
     }
 
     @Override
-    public int countOrders(Connection connection) throws SQLException {
-        return orderDAO.countOrders(connection);
-    }
-
-    @Override
-    public double findNetTotal(Connection connection) throws SQLException {
-        return orderDAO.findNetTotal(connection);
-    }
-
-    @Override
     public ArrayList<OrderDetailDTO> searchOrderDetail(String id, Connection connection) throws SQLException {
         ArrayList<OrderDetail> orderDetails = orderDetailDAO.searchOrderDetail(id, connection);
         ArrayList<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
@@ -116,11 +106,6 @@ public class PurchaseOrderBOImpl implements PurchaseOrderBO {
                 search.getDiscount(),
                 search.getCost()
         );
-    }
-
-    @Override
-    public int countQtyOnHand(String code, Connection connection) throws SQLException {
-        return orderDetailDAO.countQtyOnHand(code,connection);
     }
 
 }
