@@ -432,7 +432,7 @@ function searchCustomerDetail(custId) {
             $("#exampleInputAddress2").val(response.custAddress);
         },
         error: function (ob, statusText, error) {
-            alert("No Such Customer");
+            //alert("No Such Customer");
         }
     });
 }
@@ -442,9 +442,7 @@ function addToPreviousQty(itemId, itemQty) {
     for (let i = 0; i < itemDB.length; i++) {
         if (itemId == itemDB[i].getItemId()) {
             var qtyOnHand = itemDB[i].getQtyOnHand();
-            //console.log(qtyOnHand);
             qtyOnHand += qty;
-            //console.log(qty);
             itemDB[i].setQtyOnHand(qtyOnHand);
         }
     }
