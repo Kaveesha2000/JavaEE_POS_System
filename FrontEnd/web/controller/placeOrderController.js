@@ -148,7 +148,7 @@ function purchaseOrder() {
 
             orderDetailDTO = {
                 itemId:tblItemId,
-                oId:oId,
+                orderId:oId,
                 qty:tblItemQty,
                 unitPrice: tblItemPrice
             }
@@ -157,11 +157,11 @@ function purchaseOrder() {
         }
 
         orderDTO = {
-            oId: oId,
-            cId: cId,
-            date: date,
+            orderId: oId,
+            custId: cId,
+            orderDate: date,
             discount:discount,
-            fullTotal: fullTotal,
+            cost: fullTotal,
             itemDetails:orderDetailArray
         }
 
@@ -272,7 +272,7 @@ function loadAllCustomerIds() {
         url: "http://localhost:8080/backend/customer?option=GETALL",
         method: "GET",
         success: function (resp) {
-            for (var customer of resp.data) {
+            for (var customer of resp) {
                 $("#customerComboBox").append($("<option></option>").attr("value", customerIdsCount).text(customer.custId));
                 customerIdsCount++;
             }
@@ -283,23 +283,16 @@ function loadAllCustomerIds() {
 }
 
 $("#customerComboBox").click(function () {
-    var searchId = $("#customerComboBox").find(":selected").text();
-    console.log(searchId);
-
+    //var searchId = $("#customerComboBox").find(":selected").text();
     $.ajax({
-        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + searchId,
+        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + $("#customerComboBox option:selected").text(),
         method: "GET",
-        success: function (res) {
-            console.log(res);
-            if (res.status == 200) {
-                let customer = res.data;
-                $("#customerName").val(customer.custName);
-                $("#exampleInputTelephoneNo2").val(customer.custContact);
-                $("#exampleInputAddress2").val(customer.custAddress);
-
-            } else {
-                alert(res.data);
-            }
+        success: function (response) {
+            $("#customerName").val(response.custName);
+            $("#exampleInputTelephoneNo2").val(response.custContact);
+            $("#exampleInputAddress2").val(response.custAddress);
+        },
+        error: function (ob, statusText, error) {
         }
     });
 
@@ -332,7 +325,7 @@ function loadAllItemIds() {
         url: "http://localhost:8080/backend/item?option=GETALL",
         method: "GET",
         success: function (resp) {
-            for (var item of resp.data) {
+            for (var item of resp) {
                 $("#itemComboBox").append($("<option></option>").attr("value", itemIdsCount).text(item.itemId));
                 itemIdsCount++;
             }
@@ -354,30 +347,20 @@ function selectionDataLoadOfItem() {
         url: "http://localhost:8080/backend/item?option=GETALL",
         method: "GET",
         success: function (res) {
-            for (const item of res.data) {
+            for (const item of res) {
 
                 if (item.itemId == code) {
-                    console.log(code)
 
                     var oldQty = 0;
 
                     if ($('#tblPlaceOrder tr').length == 0) {
-                        console.log("mmmmmm");
                         $("#exampleInputQtyOnHand2").val(item.qtyOnHand);
                     } else {
-                        console.log("ddddd");
                         for (let i = 0; i < $('#tblPlaceOrder tr').length; i++) {
-                            console.log("cccccc");
-                            console.log(code);
-                            console.log(item.itemId);
                             if (code == $('#tblPlaceOrder').children().eq(i).children().eq(0).text()) {
-                                console.log("eeeeeeeeeee");
-                                console.log(i);
                                 oldQty = parseInt($($('#tblPlaceOrder tr').eq(i).children(":eq(3)")).text());
-                                console.log(oldQty);
                                 $("#exampleInputQtyOnHand2").val(item.qtyOnHand - oldQty);
                             } else {
-                                console.log("ttttttt");
                                 $("#exampleInputQtyOnHand2").val(item.qtyOnHand);
                             }
                         }

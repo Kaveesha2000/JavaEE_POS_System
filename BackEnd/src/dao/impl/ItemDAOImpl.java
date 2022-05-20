@@ -31,18 +31,18 @@ public class ItemDAOImpl implements ItemDAO {
     }
 
     @Override
-    public boolean delete(String s, Connection connection) throws SQLException {
+    public boolean delete(String id, Connection connection) throws SQLException {
         return CrudUtil.executeUpdate("DELETE FROM Item WHERE itemId=?",
                 connection,
-                s
+                id
         );
     }
 
     @Override
-    public Item search(String s, Connection connection) throws SQLException {
+    public Item search(String id, Connection connection) throws SQLException {
         ResultSet rst = CrudUtil.executeQuery("SELECT * FROM Item WHERE itemId=?",
                 connection,
-                s
+                id
         );
         if (rst.next()){
             return new Item(
@@ -74,7 +74,19 @@ public class ItemDAOImpl implements ItemDAO {
     }
 
     @Override
-    public List<String> getIds(Connection connection) throws SQLException {
+    public int countItems(Connection connection) throws SQLException {
+        ResultSet rst = CrudUtil.executeQuery("SELECT COUNT(*) FROM Item",
+                connection
+        );
+        int count = 0;
+        while (rst.next()){
+            count = rst.getInt(1);
+        }
+        return count;
+    }
+
+    @Override
+    public List<String> getCodes(Connection connection) throws SQLException {
         ResultSet rst = CrudUtil.executeQuery("SELECT itemId FROM Item ORDER BY itemId DESC LIMIT 1",
                 connection
         );
@@ -83,5 +95,13 @@ public class ItemDAOImpl implements ItemDAO {
             ids.add(rst.getString(1));
         }
         return ids;
+    }
+
+    @Override
+    public boolean updateQtyOnHand(String code, int qty, Connection connection) throws SQLException {
+        return CrudUtil.executeUpdate("UPDATE Item SET qtyOnHand=(qtyOnHand - " + qty + " )  WHERE itemCode=?",
+                connection,
+                code
+        );
     }
 }

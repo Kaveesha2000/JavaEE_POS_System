@@ -8,6 +8,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public interface OrderDAO extends CrudDAO<Order,String, Connection> {
-    boolean ifOrderExist(String oid) throws SQLException, ClassNotFoundException;
-    String generateNewOrderId() throws SQLException, ClassNotFoundException;
-}
+    String getOrderId(Connection connection) throws SQLException;
+    int countOrders(Connection connection) throws SQLException;
+    double findNetTotal(Connection connection) throws SQLException;}

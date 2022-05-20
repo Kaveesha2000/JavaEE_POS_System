@@ -1,35 +1,73 @@
 package dao.impl;
 
+import dao.CrudUtil;
 import dao.custom.OrderDetailDAO;
+import entity.OrderDetail;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class OrderDetailDAOImpl implements OrderDetailDAO {
 
     @Override
-    public boolean add(OrderDetailDAO orderDetailDAO, Connection connection) throws SQLException {
-        return false;
+    public boolean add(OrderDetail orderDetail, Connection connection) throws SQLException {
+        return CrudUtil.executeUpdate(
+                "INSERT INTO Orderdetail VALUES(?,?,?,?)",
+                connection,
+                orderDetail.getItemId(),orderDetail.getOrderId(),orderDetail.getQty(),orderDetail.getUnitPrice()
+        );
     }
 
     @Override
-    public boolean update(OrderDetailDAO orderDetailDAO, Connection connection) throws SQLException {
-        return false;
+    public boolean update(OrderDetail orderDetail, Connection connection) throws SQLException {
+        throw new UnsupportedOperationException("No Supported Yet.");
     }
 
     @Override
     public boolean delete(String s, Connection connection) throws SQLException {
-        return false;
+        throw new UnsupportedOperationException("No Supported Yet.");
     }
 
     @Override
-    public OrderDetailDAO search(String s, Connection connection) throws SQLException {
-        return null;
+    public OrderDetail search(String s, Connection connection) throws SQLException {
+        throw new UnsupportedOperationException("No Supported Yet.");
     }
 
     @Override
-    public ArrayList<OrderDetailDAO> getAll(Connection connection) throws SQLException {
-        return null;
+    public ArrayList<OrderDetail> getAll(Connection connection) throws SQLException {
+        throw new UnsupportedOperationException("No Supported Yet.");
+    }
+
+    @Override
+    public ArrayList<OrderDetail> searchOrderDetail(String id, Connection connection) throws SQLException {
+        ResultSet rst = CrudUtil.executeQuery("SELECT * FROM orderdetail WHERE orderId=?",
+                connection,
+                id
+        );
+        ArrayList<OrderDetail> orderDetails = new ArrayList<>();
+        while (rst.next()){
+            orderDetails.add(new OrderDetail(
+                    rst.getString(1),
+                    rst.getString(2),
+                    rst.getInt(3),
+                    rst.getInt(4)
+            ));
+        }
+        return orderDetails;
+    }
+
+    @Override
+    public int countQtyOnHand(String id, Connection connection) throws SQLException {
+        ResultSet rst = CrudUtil.executeQuery("SELECT SUM(sellQty) FROM orderdetail WHERE orderId=?",
+                connection,
+                id
+        );
+        if (rst.next()){
+            return rst.getInt(1);
+        }else {
+            return 0;
+        }
     }
 }

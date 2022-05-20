@@ -82,6 +82,6 @@ public class ItemBOImpl implements ItemBO {
 
     @Override
     public List<String> getItemCodes(Connection connection) throws SQLException {
-        return itemDAO.getIds(connection);
+        return itemDAO.getCodes(connection);
     }
 }

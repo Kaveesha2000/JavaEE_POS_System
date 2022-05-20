@@ -1,5 +1,10 @@
 package servlet;
 
+import bo.BOFactory;
+import bo.custom.PurchaseOrderBO;
+import dto.OrderDTO;
+import dto.OrderDetailDTO;
+
 import javax.annotation.Resource;
 import javax.json.*;
 import javax.servlet.ServletException;
@@ -14,9 +19,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 @WebServlet(urlPatterns = "/placeorder")
 public class PlaceOrderServlet extends HttpServlet {
+
+    private PurchaseOrderBO placeOrderBO = (PurchaseOrderBO) BOFactory.getBOFactory().getBO(BOFactory.BoTypes.PURCHASE_ORDER);
 
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource ds;
@@ -26,24 +34,67 @@ public class PlaceOrderServlet extends HttpServlet {
         try {
             //System.out.println("Request Received from Customer");
             String option = req.getParameter("option");
+            String orderId = req.getParameter("orderId");
             resp.setContentType("application/json");
             Connection connection = ds.getConnection();
             PrintWriter writer = resp.getWriter();
 
             switch (option) {
-                /*case "SEARCH":
+                case "SEARCH":
+                    OrderDTO order = placeOrderBO.searchOrder(orderId, connection);
+
+                    JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                    objectBuilder.add("orderId",order.getOrderId());
+                    objectBuilder.add("custId",order.getCustId());
+                    objectBuilder.add("orderDate",order.getOrderDate());
+                    objectBuilder.add("discount",order.getDiscount());
+                    objectBuilder.add("cost",order.getCost());
+
+                    writer.write(String.valueOf(objectBuilder.build()));
+                    break;
+                case "SEARCHDETAILS":
+
+                    ArrayList<OrderDetailDTO> orderDetails = placeOrderBO.searchOrderDetail(orderId, connection);
+
+                    JsonArrayBuilder arrayBuilder1 = Json.createArrayBuilder();
+
+                    for (OrderDetailDTO orderDetail : orderDetails) {
+                        JsonObjectBuilder ob = Json.createObjectBuilder();
+                        ob.add("itemId",orderDetail.getItemId());
+                        ob.add("orderId",orderDetail.getOrderId());
+                        ob.add("qty",orderDetail.getQty());
+                        ob.add("unitPrice",orderDetail.getUnitPrice());
+
+                        arrayBuilder1.add(ob.build());
+                    }
+                    writer.write(String.valueOf(arrayBuilder1.build()));
 
                     break;
-                case "GETALL":
 
-                    break;*/
-                case "GENERATEORDERID":
-                    ResultSet rst3 = connection.prepareStatement("select orderId FROM `order` ORDER BY orderId DESC LIMIT 1").executeQuery();
-                    while (rst3.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("orderId",rst3.getString(1));
-                        writer.print(objectBuilder.build());
-                    }
+                case "GETIDS":
+
+                    JsonObjectBuilder obj = Json.createObjectBuilder();
+                    obj.add("orderId",placeOrderBO.getOrderId(connection));
+                    writer.print(obj.build());
+
+                    break;
+
+                case "COUNT":
+
+                    writer.print(placeOrderBO.countOrders(connection));
+
+                    break;
+
+                case "TOTAL":
+
+                    writer.print(placeOrderBO.findNetTotal(connection));
+
+                    break;
+
+                case "COUNTQTY":
+
+                    writer.print(placeOrderBO.countQtyOnHand(orderId,connection));
+
                     break;
             }
             connection.close();
@@ -54,70 +105,53 @@ public class PlaceOrderServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException    {
 
+        resp.setContentType("application/json");
         PrintWriter writer = resp.getWriter();
-        Connection connection = null;
+
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject jsonObject = reader.readObject();
+        JsonArray items = jsonObject.getJsonArray("itemDetails");
+
         try {
 
-            resp.setContentType("application/json");
-            connection = ds.getConnection();
+            Connection  connection = ds.getConnection();
 
-            JsonReader reader = Json.createReader(req.getReader());
-            JsonObject jsonObject = reader.readObject();
-            JsonArray items = jsonObject.getJsonArray("itemDetails");
+            ArrayList<OrderDetailDTO> orderDetailDTO = new ArrayList<>();
+            for (JsonValue item : items) {
+                System.out.println(item);
+                JsonObject jo = item.asJsonObject();
+                        orderDetailDTO.add(new OrderDetailDTO(
+                                jo.getString("itemId"),
+                                jo.getString("orderId"),
+                                Integer.parseInt(jo.getString("qty")),
+                                Integer.parseInt(jo.getString("unitPrice"))
+                        ));
+            }
 
-            connection.setAutoCommit(false);
+            OrderDTO orderDTO = new OrderDTO(
+                    jsonObject.getString("orderId"),
+                    jsonObject.getString("custId"),
+                    jsonObject.getString("orderDate"),
+                    jsonObject.getInt("discount"),
+                    jsonObject.getInt("cost"),
+                    //Double.parseDouble(jsonObject.getString("cost")),
+                    orderDetailDTO
+            );
 
-            PreparedStatement pstm = connection.prepareStatement("Insert into `Order` values(?,?,?,?,?)");
-            pstm.setObject(1,jsonObject.getString("oId"));
-            pstm.setObject(2,jsonObject.getString("cId"));
-            pstm.setObject(3,jsonObject.getString("date"));
-            pstm.setObject(4,jsonObject.getInt("discount"));
-            pstm.setObject(5,jsonObject.getInt("fullTotal"));
-
-            if (pstm.executeUpdate()>0) {
-
-                for (JsonValue item : items) {
-
-                    JsonObject jasonObject2 = item.asJsonObject();
-
-                    PreparedStatement pstm1 = connection.prepareStatement("Insert into orderdetail values(?,?,?,?)");
-                    pstm1.setObject(1,jasonObject2.getString("itemId"));
-                    pstm1.setObject(2,jasonObject2.getString("oId"));
-                    pstm1.setObject(3,jasonObject2.getString("qty"));
-                    pstm1.setObject(4,jasonObject2.getString("unitPrice"));
-
-                    String itemId = jasonObject2.getString("itemId");
-                    int qty = Integer.parseInt(jasonObject2.getString("qty"));
-
-                    if (pstm1.executeUpdate()>0){
-                        PreparedStatement ptm = connection.prepareStatement("update Item set qtyOnHand = (qtyOnHand - qty)  where itemId= itemId");
-                        if (ptm.executeUpdate()>0){
-                            connection.setAutoCommit(true);
-                        }else {
-                            connection.rollback();
-                        }
-                    }else {
-                        connection.rollback();
-                    }
-
-                }
-                connection.commit();
-
+            if (placeOrderBO.placeOrder(orderDTO,connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("message", "Successfully Purchased Order.");
                 objectBuilder.add("status", resp.getStatus());
                 writer.print(objectBuilder.build());
-            }else {
-                connection.rollback();
+
             }
 
             connection.close();
 
         } catch (SQLException e) {
-
             resp.setStatus(HttpServletResponse.SC_OK);
 
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
@@ -127,20 +161,7 @@ public class PlaceOrderServlet extends HttpServlet {
             writer.print(objectBuilder.build());
 
             e.printStackTrace();
-
-        }finally {
-            try {
-
-                connection.setAutoCommit(true);
-
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
         }
     }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-    }
 }
