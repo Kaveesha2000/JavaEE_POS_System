@@ -96,10 +96,7 @@ $('#addBtn').click(function () {
 
 //purchase
 $('#purchaseBtn').click(function () {
-
     purchaseOrder();
-
-
 })
 
 function purchaseOrder() {
@@ -192,7 +189,6 @@ function purchaseOrder() {
         });
     }
 }
-
 //load cart
 var fullTotal = 0;
 
@@ -238,7 +234,11 @@ function loadCart() {
 
 //search existing order
 $('#searchOrderBtn').click(function () {
-    searchOrders();
+    $("#tblPlaceOrder tbody tr").empty();
+    //var orderId = $.trim($("#orderSearchBar").val());
+    var orderId = $("#orderSearchBar").val();
+    searchOrder(orderId);
+    searchCustomerDetail(orderId);
 })
 
 //clearing the text fields
@@ -283,9 +283,9 @@ function loadAllCustomerIds() {
 }
 
 $("#customerComboBox").click(function () {
-    //var searchId = $("#customerComboBox").find(":selected").text();
+    var searchId = $("#customerComboBox").find(":selected").text();
     $.ajax({
-        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + $("#customerComboBox option:selected").text(),
+        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" +searchId,
         method: "GET",
         success: function (response) {
             $("#customerName").val(response.custName);
@@ -404,46 +404,40 @@ function checkOrderQtyAndAddToCart() {
 }
 
 //search orders
-function searchOrders() {
-    var orderId = $('#orderSearchBar').val();
-    var ifExist = false;
+function searchOrder(orderId) {
+    $.ajax({
+        url: "http://localhost:8080/backend/placeorder?option=SEARCH&orderId=" + orderId,
+        method: "GET",
+        success: function (response) {
+            $("#exampleInputId2").val(response.orderId);
+            $("#exampleInputDate").val(response.orderDate);
+            $("#customerComboBox").val(response.custId);
+            $("#discountComboBox").val(response.discount);
+            $("#exampleInputTotal").val(response.cost);
 
-    for (let i = 0; i < orderDB.length; i++) {
-        if (orderId == orderDB[i].getOrderId()) {
-            ifExist = true;
+
+            searchCustomerDetail(response.custId);
+        },
+        error: function (ob, statusText, error) {
+            alert("No Such Order");
         }
-    }
-    if (ifExist == true) {
-        for (let i = 0; i < orderDB.length; i++) {
-            //from order db
-            for (var j = 0; j < orderDB.length; j++) {
-                if (orderId == orderDB[i].getOrderId()) {
-                    $("#exampleInputId2").val(orderId);
-                    $("#customerComboBox").val(orderDB[j].getCustomerID());
-                    $("#exampleInputDate").val(orderDB[j].getDate());
-                    $("#discountComboBox").val(orderDB[j].getDiscount());
-                    $("#exampleInputTotal").val(orderDB[j].getTotal());
-                }
-            }
-            //from customer db
-            for (var j = 0; j < customerDB.length; j++) {
-                if ($("#customerComboBox").val() == customerDB[i].getCustomerId()) {
-                    $("#customerName").val(customerDB[j].getCustomerName());
-                    $("#exampleInputTelephoneNo2").val(customerDB[j].getCustomerTelNo());
-                    $("#exampleInputAddress2").val(customerDB[j].getCustomerAddress());
-                }
-            }
-            for (var j = 0; j < orderDetailsDB.length; j++) {
-                if (orderId == orderDetailsDB[j].getOrderid()) {
-                    let raw = `<tr><td> ${orderDetailsDB[j].getItemCode()} </td><td> ${orderDetailsDB[j].getItemName()} </td><td> ${orderDetailsDB[j].getItemUnitPrice()} </td><td> ${orderDetailsDB[j].getItemQty()} </td><td> ${orderDetailsDB[j].getTotAmount()} </td></tr>`;
-                    $("#tblPlaceOrder").append(raw);
-                }
-            }
+    });
+}
+
+function searchCustomerDetail(custId) {
+    $.ajax({
+        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + custId,
+        method: "GET",
+        success: function (response) {
+            $("#customerComboBox").val(response.custId);
+            $("#customerName").val(response.custName);
+            $("#exampleInputTelephoneNo2").val(response.custContact);
+            $("#exampleInputAddress2").val(response.custAddress);
+        },
+        error: function (ob, statusText, error) {
+            alert("No Such Customer");
         }
-        $('#orderSearchBar').val('');
-    } else {
-        alert('There is no any order related to ' + orderId);
-    }
+    });
 }
 
 function addToPreviousQty(itemId, itemQty) {

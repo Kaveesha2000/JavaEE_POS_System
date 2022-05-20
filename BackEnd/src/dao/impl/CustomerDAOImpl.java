@@ -52,9 +52,8 @@ public class CustomerDAOImpl implements CustomerDAO {
                     rst.getString(3),
                     rst.getString(4)
             );
-        }else {
-            return null;
         }
+            return null;
     }
 
     @Override

@@ -35,10 +35,8 @@ public class PurchaseOrderBOImpl implements PurchaseOrderBO {
                             orderDTO.getCost()),
                     connection
             );
-            System.out.println(ifSaveOrder+"saveorder");
 
             if (ifSaveOrder){
-                System.out.println(saveOrderDetail(orderDTO,connection)+"saveorderdetail");
                 if (saveOrderDetail(orderDTO,connection)){
                     con.commit();
                     return true;
@@ -87,7 +85,6 @@ public class PurchaseOrderBOImpl implements PurchaseOrderBO {
 
     @Override
     public boolean updateQtyOnHand(String code, int qty, Connection connection) throws SQLException {
-        System.out.println(itemDAO.updateQtyOnHand(code,qty,connection)+"updateqty");
         return itemDAO.updateQtyOnHand(code,qty,connection);
     }
 

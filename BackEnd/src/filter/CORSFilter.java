@@ -23,7 +23,6 @@ public class CORSFilter implements Filter {
 
     }
 
-
     @Override
     public void destroy() {
 

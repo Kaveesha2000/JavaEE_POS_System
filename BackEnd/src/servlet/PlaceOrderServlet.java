@@ -32,7 +32,6 @@ public class PlaceOrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            //System.out.println("Request Received from Customer");
             String option = req.getParameter("option");
             String orderId = req.getParameter("orderId");
             resp.setContentType("application/json");
@@ -71,7 +70,7 @@ public class PlaceOrderServlet extends HttpServlet {
 
                     break;
 
-                case "GETIDS":
+                case "GENERATEORDERID":
 
                     JsonObjectBuilder obj = Json.createObjectBuilder();
                     obj.add("orderId",placeOrderBO.getOrderId(connection));
@@ -79,23 +78,6 @@ public class PlaceOrderServlet extends HttpServlet {
 
                     break;
 
-                case "COUNT":
-
-                    writer.print(placeOrderBO.countOrders(connection));
-
-                    break;
-
-                case "TOTAL":
-
-                    writer.print(placeOrderBO.findNetTotal(connection));
-
-                    break;
-
-                case "COUNTQTY":
-
-                    writer.print(placeOrderBO.countQtyOnHand(orderId,connection));
-
-                    break;
             }
             connection.close();
 
@@ -136,7 +118,6 @@ public class PlaceOrderServlet extends HttpServlet {
                     jsonObject.getString("orderDate"),
                     jsonObject.getInt("discount"),
                     jsonObject.getInt("cost"),
-                    //Double.parseDouble(jsonObject.getString("cost")),
                     orderDetailDTO
             );
 

@@ -153,25 +153,17 @@ $("#searchBtnItem").click(function () {
     let searchId = $("#exampleInputSearch1").val();
 
     $.ajax({
-        url: "http://localhost:8080/backend/item?option=SEARCH&itemId=" + searchId,
+        url: "http://localhost:8080/backend/item?option=SEARCH&itemId=" +searchId,
         method: "GET",
-        success: function (res) {
-            console.log(res);
-            if (res.status == 200) {
-                let item = res.data;
-                $("#itemId").val(item.itemId);
-                $("#itemName").val(item.itemName);
-                $("#itemUnitPrice").val(item.unitPrice);
-                $("#itemQTYOnHand").val(item.qtyOnHand);
-
-            } else {
-                alert(res.data);
-            }
-
+        success: function (response) {
+            $("#itemId").val(response.itemId);
+            $("#itemName").val(response.itemName);
+            $("#itemUnitPrice").val(response.unitPrice);
+            $("#itemQTYOnHand").val(response.qtyOnHand);
         },
-        error: function (ob, status, t) {
-            alert("Error");
-            loadAllItems();
+        error: function (ob, statusText, error) {
+            alert("No Such Item");
+            loadAllCustomers();
         }
     });
 });

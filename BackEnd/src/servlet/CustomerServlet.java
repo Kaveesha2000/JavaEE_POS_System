@@ -2,6 +2,7 @@ package servlet;
 
 import bo.impl.CustomerBOImpl;
 import dto.CustomerDTO;
+import dto.ItemDTO;
 
 import javax.annotation.Resource;
 import javax.json.*;
@@ -43,6 +44,8 @@ public class CustomerServlet extends HttpServlet {
                 case "SEARCH":
 
                     CustomerDTO customer = customerBO.searchCustomer(custId, connection);
+
+                    System.out.println(customer);
 
                     JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
                     objectBuilder1.add("custId",customer.getCustomerId());
