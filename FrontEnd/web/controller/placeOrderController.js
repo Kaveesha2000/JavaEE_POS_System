@@ -110,6 +110,11 @@ function purchaseOrder() {
     var total = $('#exampleInputTotal').val();
     var discount = $('#discountComboBox').val();
 
+    var orderDetailDTO = null;
+    var orderDTO = null;
+
+    let orderDetailArray = new Array();
+
     if ((discount) != '') {
         discount = parseInt($('#discountComboBox').val());
     } else {
@@ -141,15 +146,23 @@ function purchaseOrder() {
             tblItemQty = $('#tblPlaceOrder tr').children(':nth-child(4)')[i].innerText;
             tblItemTotal = $('#tblPlaceOrder tr').children(':nth-child(5)')[i].innerText;
 
-            var orderDetailDTO = new OrderDetailDTO(oId, tblItemId, tblItemName, tblItemPrice, tblItemQty, tblItemTotal);
+            orderDetailDTO = {
+                itemId:tblItemId,
+                oId:oId,
+                qty:tblItemQty,
+                unitPrice: tblItemPrice
+            }
+
+            orderDetailArray.push(orderDetailDTO);
         }
 
-        var orderDTO = {
+        orderDTO = {
             oId: oId,
             cId: cId,
             date: date,
             discount:discount,
-            fullTotal: fullTotal
+            fullTotal: fullTotal,
+            itemDetails:orderDetailArray
         }
 
         $('#exampleInputBalance').val(balance);
@@ -157,8 +170,10 @@ function purchaseOrder() {
 
         fullTotal = 0;
 
+        //---------------------------order data adding------------------------
+
         $.ajax({
-            url: "http://localhost:8080/backend/placeorder?option=ADDOREDER",
+            url: "http://localhost:8080/backend/placeorder",
             method: "POST",
             contentType:"application/json",
             data: JSON.stringify(orderDTO),
@@ -172,7 +187,7 @@ function purchaseOrder() {
 
             },
             error: function (ob, textStatus, error) {
-                alert("Error :"+error);
+                alert("Unsuccessful...! Try Again");
             }
         });
     }

@@ -1,5 +1,8 @@
 package servlet;
 
+import bo.impl.CustomerBOImpl;
+import dto.CustomerDTO;
+
 import javax.annotation.Resource;
 import javax.json.*;
 import javax.servlet.ServletException;
@@ -14,9 +17,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
+
+    CustomerBOImpl customerBO = new CustomerBOImpl();
 
     @Resource(name = "java:comp/env/jdbc/pool")
     DataSource ds;
@@ -27,78 +34,48 @@ public class CustomerServlet extends HttpServlet {
         try {
             //System.out.println("Request Received from Customer");
             String option = req.getParameter("option");
+            String custId = req.getParameter("custId");
             resp.setContentType("application/json");
             Connection connection = ds.getConnection();
             PrintWriter writer = resp.getWriter();
 
             switch (option) {
                 case "SEARCH":
-                    String customerID = req.getParameter("custId");
-                    PreparedStatement pstm = connection.prepareStatement("select * from Customer where custId=?");
-                    pstm.setObject(1, customerID);
 
-                    ResultSet rst1 = pstm.executeQuery();
+                    CustomerDTO customer = customerBO.searchCustomer(custId, connection);
 
+                    JsonObjectBuilder objectBuilder1 = Json.createObjectBuilder();
+                    objectBuilder1.add("custId",customer.getCustomerId());
+                    objectBuilder1.add("custName",customer.getCustomerName());
+                    objectBuilder1.add("custAddress",customer.getCustomerAddress());
+                    objectBuilder1.add("custContact",customer.getCustomerContact());
 
-                    if (rst1.next()) {
-                        String id = rst1.getString(1);
-                        String name = rst1.getString(2);
-                        String address = rst1.getString(3);
-                        String contact = rst1.getString(4);
+                    writer.write(String.valueOf(objectBuilder1.build()));
 
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-
-                        objectBuilder.add("custId", id);
-                        objectBuilder.add("custName", name);
-                        objectBuilder.add("custAddress", address);
-                        objectBuilder.add("custContact", contact);
-                        JsonObjectBuilder response1 = Json.createObjectBuilder();
-
-                        response1.add("status", 200);
-                        response1.add("message", "Done");
-                        response1.add("data", objectBuilder.build());
-
-                        writer.print(response1.build());
-                        resp.setStatus(HttpServletResponse.SC_OK);
-                    }
                     break;
                 case "GETALL":
-                    ResultSet rst = connection.prepareStatement("select * from Customer").executeQuery();
-                    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder(); // json array
-                    while (rst.next()) {
-                        String id = rst.getString(1);
-                        String name = rst.getString(2);
-                        String address = rst.getString(3);
-                        String contact = rst.getString(4);
+                    ArrayList<CustomerDTO> allCustomer = customerBO.getAllCustomers(connection);
+                    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-
-                        objectBuilder.add("custId", id);
-                        objectBuilder.add("custName", name);
-                        objectBuilder.add("custAddress", address);
-                        objectBuilder.add("custContact", contact);
-
-                        arrayBuilder.add(objectBuilder.build());
+                    for (CustomerDTO c : allCustomer) {
+                        JsonObjectBuilder ob = Json.createObjectBuilder();
+                        ob.add("custId",c.getCustomerId());
+                        ob.add("custName",c.getCustomerName());
+                        ob.add("custAddress",c.getCustomerAddress());
+                        ob.add("custContact",c.getCustomerContact());
+                        arrayBuilder.add(ob.build());
                     }
+                    writer.write(String.valueOf(arrayBuilder.build()));
 
-                    resp.setStatus(HttpServletResponse.SC_OK);
-
-                    JsonObjectBuilder response = Json.createObjectBuilder();
-
-                    response.add("status", 200);
-                    response.add("message", "Done");
-                    response.add("data", arrayBuilder.build());
-
-                    writer.print(response.build());
                     break;
                 case "GENERATECUSTOMERID":
-                    ResultSet rst2 = connection.prepareStatement("select custId FROM customer ORDER BY custId DESC LIMIT 1").executeQuery();
-                    while (rst2.next()){
-                        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                        objectBuilder.add("custId",rst2.getString(1));
-                        writer.print(objectBuilder.build());
+                    List<String> ids = customerBO.getCustomerIds(connection);
+                    for (String id : ids) {
+                        JsonObjectBuilder objectBuilder2 = Json.createObjectBuilder();
+                        objectBuilder2.add("custId",id);
+                        writer.print(objectBuilder2.build());
                     }
-                    break;
+
             }
             connection.close();
 
@@ -110,28 +87,29 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String customerID = req.getParameter("customerId");
-        String customerName = req.getParameter("customerName");
-        String customerAddress = req.getParameter("customerAddress");
-        String customerContact = req.getParameter("customerContact");
 
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
+
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject jsonObject = reader.readObject();
+
         try {
             Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("Insert into Customer values(?,?,?,?)");
-            pstm.setObject(1, customerID);
-            pstm.setObject(2, customerName);
-            pstm.setObject(3, customerAddress);
-            pstm.setObject(4, customerContact);
 
-            if (pstm.executeUpdate() > 0) {
-                JsonObjectBuilder response = Json.createObjectBuilder();
+            CustomerDTO customer = new CustomerDTO(
+                    jsonObject.getString("custId"),
+                    jsonObject.getString("custName"),
+                    jsonObject.getString("custAddress"),
+                    jsonObject.getString("custContact")
+            );
+
+            if (customerBO.saveCustomer(customer,connection)) {
                 resp.setStatus(HttpServletResponse.SC_OK);
-                response.add("status", 200);
-                response.add("message", "Successfully Added");
-                response.add("data", "");
-                writer.print(response.build());
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("message", "Customer Successfully Added.");
+                objectBuilder.add("status", resp.getStatus());
+                writer.print(objectBuilder.build());
             }
             connection.close();
         } catch (SQLException throwables) {
@@ -154,22 +132,22 @@ public class CustomerServlet extends HttpServlet {
 
         try {
             Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("Delete from Customer where custId=?");
-            pstm.setObject(1, customerID);
 
-            //System.out.println(customerID);
-            if (pstm.executeUpdate() > 0) {
+            if (customerBO.deleteCustomer(customerID,connection)) {
+
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("status", 200);
-                objectBuilder.add("data", "");
-                objectBuilder.add("message", "Successfully Deleted");
+                resp.setStatus(HttpServletResponse.SC_OK);
+                objectBuilder.add("message","Customer Successfully Deleted.");
+                objectBuilder.add("status",resp.getStatus());
                 writer.print(objectBuilder.build());
-            } else {
+
+            }else {
+
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("status", 400);
-                objectBuilder.add("data", "Wrong Id Inserted");
-                objectBuilder.add("message", "");
+                objectBuilder.add("message","Wrong Id Inserted.");
+                objectBuilder.add("status",400);
                 writer.print(objectBuilder.build());
+
             }
             connection.close();
 
@@ -189,32 +167,33 @@ public class CustomerServlet extends HttpServlet {
 
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject jsonObject = reader.readObject();
-        String customerID = jsonObject.getString("id");
-        String customerName = jsonObject.getString("name");
-        String customerAddress = jsonObject.getString("address");
-        String customerContact = jsonObject.getString("contact");
+
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
         try {
             Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("Update Customer set custName=?,custAddress=?,custContact=? where custId=?");
-            pstm.setObject(1, customerName);
-            pstm.setObject(2, customerAddress);
-            pstm.setObject(3, customerContact);
-            pstm.setObject(4, customerID);
-            if (pstm.executeUpdate() > 0) {
+
+            CustomerDTO customer = new CustomerDTO(
+                    jsonObject.getString("custId"),
+                    jsonObject.getString("custName"),
+                    jsonObject.getString("custAddress"),
+                    jsonObject.getString("custContact")
+            );
+
+            if (customerBO.updateCustomer(customer,connection)) {
+                resp.setStatus(HttpServletResponse.SC_OK);
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("status", 200);
-                objectBuilder.add("message", "Successfully Updated");
-                objectBuilder.add("data", "");
+                objectBuilder.add("message","Customer Successfully Updated.");
+                objectBuilder.add("status",resp.getStatus());
                 writer.print(objectBuilder.build());
-            } else {
+
+            }else{
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("status", 400);
-                objectBuilder.add("message", "Update Failed");
-                objectBuilder.add("data", "");
+                objectBuilder.add("message","Update Failed.");
+                objectBuilder.add("status",400);
                 writer.print(objectBuilder.build());
+
             }
             connection.close();
         } catch (SQLException throwables) {

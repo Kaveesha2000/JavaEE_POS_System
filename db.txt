@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS Customer;
 CREATE TABLE IF NOT EXISTS Customer(
     custId VARCHAR (15),
     custName VARCHAR(45) NOT NULL DEFAULT 'Unknown',
-    custAddress TEXT,
+    custAddress VARCHAR(50),
     custContact VARCHAR (15),
     CONSTRAINT PRIMARY KEY (custId)
     );

@@ -31,12 +31,12 @@ public class PlaceOrderServlet extends HttpServlet {
             PrintWriter writer = resp.getWriter();
 
             switch (option) {
-                case "SEARCH":
+                /*case "SEARCH":
 
                     break;
                 case "GETALL":
 
-                    break;
+                    break;*/
                 case "GENERATEORDERID":
                     ResultSet rst3 = connection.prepareStatement("select orderId FROM `order` ORDER BY orderId DESC LIMIT 1").executeQuery();
                     while (rst3.next()){
@@ -55,56 +55,87 @@ public class PlaceOrderServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        PrintWriter writer = resp.getWriter();
+        Connection connection = null;
         try {
 
-            String option = req.getParameter("option");
-            PrintWriter writer = resp.getWriter();
             resp.setContentType("application/json");
-            Connection connection = ds.getConnection();
+            connection = ds.getConnection();
 
             JsonReader reader = Json.createReader(req.getReader());
             JsonObject jsonObject = reader.readObject();
+            JsonArray items = jsonObject.getJsonArray("itemDetails");
 
-            switch (option) {
-                case "ADDOREDER":
+            connection.setAutoCommit(false);
 
-                    try {
-                        PreparedStatement pstm = connection.prepareStatement("Insert into `Order` values(?,?,?,?,?)");
-                        pstm.setObject(1,jsonObject.getString("oId"));
-                        pstm.setObject(2,jsonObject.getString("cId"));
-                        pstm.setObject(3,jsonObject.getString("date"));
-                        pstm.setObject(4,jsonObject.getInt("discount"));
-                        pstm.setObject(5,jsonObject.getInt("fullTotal"));
-                        System.out.println(jsonObject);
+            PreparedStatement pstm = connection.prepareStatement("Insert into `Order` values(?,?,?,?,?)");
+            pstm.setObject(1,jsonObject.getString("oId"));
+            pstm.setObject(2,jsonObject.getString("cId"));
+            pstm.setObject(3,jsonObject.getString("date"));
+            pstm.setObject(4,jsonObject.getInt("discount"));
+            pstm.setObject(5,jsonObject.getInt("fullTotal"));
 
-                        if (pstm.executeUpdate() > 0) {
-                            JsonObjectBuilder response = Json.createObjectBuilder();
-                            resp.setStatus(HttpServletResponse.SC_OK);
-                            response.add("status", 200);
-                            response.add("message", "Successfully Added");
-                            response.add("data", "");
-                            writer.print(response.build());
+            if (pstm.executeUpdate()>0) {
+
+                for (JsonValue item : items) {
+
+                    JsonObject jasonObject2 = item.asJsonObject();
+
+                    PreparedStatement pstm1 = connection.prepareStatement("Insert into orderdetail values(?,?,?,?)");
+                    pstm1.setObject(1,jasonObject2.getString("itemId"));
+                    pstm1.setObject(2,jasonObject2.getString("oId"));
+                    pstm1.setObject(3,jasonObject2.getString("qty"));
+                    pstm1.setObject(4,jasonObject2.getString("unitPrice"));
+
+                    String itemId = jasonObject2.getString("itemId");
+                    int qty = Integer.parseInt(jasonObject2.getString("qty"));
+
+                    if (pstm1.executeUpdate()>0){
+                        PreparedStatement ptm = connection.prepareStatement("update Item set qtyOnHand = (qtyOnHand - qty)  where itemId= itemId");
+                        if (ptm.executeUpdate()>0){
+                            connection.setAutoCommit(true);
+                        }else {
+                            connection.rollback();
                         }
-                        connection.close();
-                    } catch (SQLException throwables) {
-                        resp.setStatus(HttpServletResponse.SC_OK); //200
-                        JsonObjectBuilder response = Json.createObjectBuilder();
-                        response.add("status", resp.getStatus());
-                        response.add("message", "Error");
-                        response.add("data", throwables.getLocalizedMessage());
-                        writer.print(response.build());
-
-                        throwables.printStackTrace();
+                    }else {
+                        connection.rollback();
                     }
-                    break;
-                case "UPDATEQTYONHAND":
 
-                    break;
+                }
+                connection.commit();
+
+                resp.setStatus(HttpServletResponse.SC_OK);
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("message", "Successfully Purchased Order.");
+                objectBuilder.add("status", resp.getStatus());
+                writer.print(objectBuilder.build());
+            }else {
+                connection.rollback();
             }
+
             connection.close();
 
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+
+            resp.setStatus(HttpServletResponse.SC_OK);
+
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("data",e.getLocalizedMessage());
+            objectBuilder.add("message","Error");
+            objectBuilder.add("status",resp.getStatus());
+            writer.print(objectBuilder.build());
+
+            e.printStackTrace();
+
+        }finally {
+            try {
+
+                connection.setAutoCommit(true);
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
     }
 

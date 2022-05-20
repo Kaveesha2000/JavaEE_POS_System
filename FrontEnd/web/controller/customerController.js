@@ -153,14 +153,14 @@ $("#searchBtn").click(function () {
         success: function (res) {
             console.log(res);
             if (res.status == 200) {
-                let customer = res.data;
+                let customer = res;
                 $("#id").val(customer.custId);
                 $("#name").val(customer.custName);
                 $("#address").val(customer.custAddress);
                 $("#telNo").val(customer.custContact);
 
             } else {
-                alert(res.data);
+                alert(res);
             }
 
         },
@@ -174,11 +174,17 @@ $("#searchBtn").click(function () {
 // Customer Crud Operations
 //START
 function saveCustomer() {
-    var data = $("#customerForm").serialize();
+    var cusDetail = {
+        custId: $("#id").val(),
+        custName: $("#name").val(),
+        custAddress: $("#address").val(),
+        custContact: $("#telNo").val(),
+    }
     $.ajax({
         url: "http://localhost:8080/backend/customer",
         method: "POST",
-        data: data,// if we send data with the request
+        contentType: "application/json",
+        data: JSON.stringify(cusDetail),
         success: function (res) {
             if (res.status == 200) {
                 alert(res.message);
@@ -224,18 +230,18 @@ function deleteCustomer() {
 }
 
 function updateCustomer() {
-    var customerOb = {
-        id: $("#id").val(),
-        name: $("#name").val(),
-        address: $("#address").val(),
-        contact: $("#telNo").val()
+    var cusDetail = {
+        custId: $("#id").val(),
+        custName: $("#name").val(),
+        custAddress: $("#address").val(),
+        custContact: $("#telNo").val(),
     }
 
     $.ajax({
         url: "http://localhost:8080/backend/customer",
         method: "PUT",
         contentType: "application/json",
-        data: JSON.stringify(customerOb),
+        data: JSON.stringify(cusDetail),
         success: function (res) {
             if (res.status == 200) {
                 alert(res.message);
@@ -261,7 +267,7 @@ function loadAllCustomers() {
         url: "http://localhost:8080/backend/customer?option=GETALL",
         method: "GET",
         success: function (resp) {
-            for (const customer of resp.data) {
+            for (const customer of resp) {
                 let row = `<tr><td>${customer.custId}</td><td>${customer.custName}</td><td>${customer.custAddress}</td><td>${customer.custContact}</td></tr>`;
                 $("#tblCustomer").append(row);
             }
