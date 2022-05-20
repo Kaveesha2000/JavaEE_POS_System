@@ -21,10 +21,9 @@ public class PurchaseOrderBOImpl implements PurchaseOrderBO {
     private ItemDAO itemDAO = (ItemDAO) DAOFactory.getDAOFactory().getDAO(DAOFactory.DAOTypes.ITEM);
 
     @Override
-    public boolean placeOrder(OrderDTO orderDTO, Connection connection) {
-        Connection con = null;
-        try {
-            con = connection;
+    public boolean placeOrder(OrderDTO orderDTO, Connection connection) throws SQLException {
+        Connection con = connection;
+
             con.setAutoCommit(false);
 
             boolean ifSaveOrder = orderDAO.add(new Order(
@@ -33,11 +32,11 @@ public class PurchaseOrderBOImpl implements PurchaseOrderBO {
                             orderDTO.getOrderDate(),
                             orderDTO.getDiscount(),
                             orderDTO.getCost()),
-                    connection
+                    con
             );
 
             if (ifSaveOrder){
-                if (saveOrderDetail(orderDTO,connection)){
+                if (saveOrderDetail(orderDTO,con)){
                     con.commit();
                     return true;
                 }else {
@@ -48,18 +47,6 @@ public class PurchaseOrderBOImpl implements PurchaseOrderBO {
                 con.rollback();
                 return false;
             }
-        } catch (SQLException throwables) {
-        } finally {
-            try {
-
-                con.setAutoCommit(true);
-
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
-
-        return true;
     }
 
     @Override
@@ -71,7 +58,7 @@ public class PurchaseOrderBOImpl implements PurchaseOrderBO {
             );
             if (ifOrderDetailSaved){
                 if (updateQtyOnHand(item.getItemId(),item.getQty(),connection)){
-
+                    return true;
                 }else {
                     return false;
                 }

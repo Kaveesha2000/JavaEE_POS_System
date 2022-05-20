@@ -181,7 +181,6 @@ function purchaseOrder() {
                 } else {
                     alert(res.data);
                 }
-
             },
             error: function (ob, textStatus, error) {
                 alert("Unsuccessful...! Try Again");
@@ -284,7 +283,7 @@ function loadAllCustomerIds() {
 
 $("#customerComboBox").click(function () {
     var searchId = $("#customerComboBox").find(":selected").text();
-    $.ajax({
+   /* $.ajax({
         url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" +searchId,
         method: "GET",
         success: function (response) {
@@ -295,24 +294,22 @@ $("#customerComboBox").click(function () {
         error: function (ob, statusText, error) {
         }
     });
+*/
 
+     $.ajax({
+         url: "http://localhost:8080/backend/customer?option=GETALL",
+         method: "GET",
+         success:function (res){
+             for (const customer of res){
+                 if(customer.custId == searchId){
 
-    // $.ajax({
-    //     url: "http://localhost:8080/backend/customer?option=GETALL",
-    //     method: "GET",
-    //     success:function (res){
-    //         for (const customer of res.data){
-    //             if(customer.custId == code){
-    //
-    //                 $("#customerName").val(customer.custName);
-    //                 $("#exampleInputTelephoneNo2").val(customer.custContact);
-    //                 $("#exampleInputAddress2").val(customer.custAddress);
-    //             }
-    //         }
-    //     }
-    // })
-
-
+                     $("#customerName").val(customer.custName);
+                     $("#exampleInputTelephoneNo2").val(customer.custContact);
+                     $("#exampleInputAddress2").val(customer.custAddress);
+                 }
+             }
+         }
+     });
 });
 
 function loadAllItemIds() {

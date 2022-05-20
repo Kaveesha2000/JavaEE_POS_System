@@ -147,28 +147,6 @@ $("#searchBtn").click(function () {
 
     let searchId = $("#exampleInputSearch").val();
 
-   /* $.ajax({
-        url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" + searchId,
-        method: "GET",
-        success: function (res) {
-            console.log(res);
-            if (res.status == 200) {
-                let customer = res.data;
-                $("#id").val(customer.custId);
-                $("#name").val(customer.custName);
-                $("#address").val(customer.custAddress);
-                $("#telNo").val(customer.custContact);
-
-            } else {
-                alert(res);
-            }
-
-        },
-        error: function (ob, status, t) {
-            alert("Error");
-            loadAllCustomers();
-        }
-    });*/
     $.ajax({
         url: "http://localhost:8080/backend/customer?option=SEARCH&custId=" +searchId,
         method: "GET",

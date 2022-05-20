@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface PurchaseOrderBO extends SuperBO {
-    boolean placeOrder(OrderDTO orderDTO,Connection connection);
+    boolean placeOrder(OrderDTO orderDTO,Connection connection) throws SQLException;
     boolean saveOrderDetail(OrderDTO orderDTO, Connection connection) throws SQLException;
     boolean updateQtyOnHand(String code,int qty, Connection connection) throws SQLException;
     String getOrderId(Connection connection) throws SQLException;
